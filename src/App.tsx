@@ -507,7 +507,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-sky-500 selection:text-white">
+    <div className="studio-app flex min-h-screen font-sans">
       {/* Sidebar */}
       {!isSidebarCollapsed && (
         <TracksSidebar
@@ -699,7 +699,7 @@ export default function App() {
         </Suspense>
 
         {/* Footer */}
-        <footer className="border-t border-slate-800/80 bg-slate-950/60 py-3 text-center text-xs text-slate-500 font-mono">
+        <footer className="studio-footer border-t py-3 text-center text-xs font-mono">
           Kceva Music Studio • Real-Time C++ Audio DSP Synthesis & Web Audio Engine • kceva.com
         </footer>
       </div>

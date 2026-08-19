@@ -424,7 +424,7 @@ export function StepSequencer({
   return (
     <div id="step-sequencer" className="min-w-0 max-w-full space-y-4">
       {/* Visual Track Selector Ribbon */}
-      <div className="bg-slate-900 border border-slate-800 p-3 space-y-3 shadow-xl">
+      <div className="studio-panel border p-3 space-y-3 shadow-xl">
         <div className="flex flex-wrap items-center justify-between gap-3">
           {/* Main 4 Musical Lines + Dynamic Lines */}
           <div className="flex flex-wrap items-center gap-2">
@@ -442,7 +442,7 @@ export function StepSequencer({
                   className={`px-4 py-2 text-xs font-black transition-all flex items-center gap-2 border ${
                     selectedTrack === t.id
                       ? `${t.color} shadow-lg scale-105`
-                      : 'bg-slate-950 text-slate-300 border-slate-800 hover:bg-slate-800 hover:text-white'
+                      : 'studio-inset text-slate-300 border hover:bg-slate-800 hover:text-white'
                   }`}
                 >
                   <IconComp className="w-3.5 h-3.5" />
@@ -459,7 +459,7 @@ export function StepSequencer({
                   className={`px-3 py-2 text-xs font-black transition-all flex items-center gap-1.5 border ${
                     selectedTrack === line.id
                       ? 'bg-pink-600 text-white border-pink-400 shadow-lg scale-105'
-                      : 'bg-slate-950 text-pink-300 border-slate-800 hover:bg-slate-800'
+                      : 'studio-inset text-pink-300 border hover:bg-slate-800'
                   }`}
                 >
                   <Music className="w-3 h-3 text-pink-400" />
@@ -467,7 +467,7 @@ export function StepSequencer({
                 </button>
                 <button
                   onClick={() => handleDeleteCustomLine(line.id)}
-                  className="p-2 text-slate-500 hover:text-rose-400 bg-slate-950 hover:bg-rose-950 border border-slate-800 border-l-0"
+                  className="studio-inset p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-950 border border-l-0"
                   title="Remove Line"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -624,7 +624,7 @@ export function StepSequencer({
 
         {/* Euclidean Polyrhythm Modal / Inline Tool */}
         {isEuclideanOpen && (
-          <div className="bg-slate-950 border border-sky-500/60 rounded p-3 space-y-2 shadow-2xl animate-in fade-in duration-150">
+          <div className="studio-panel border border-sky-500/60 rounded p-3 space-y-2 shadow-2xl animate-in fade-in duration-150">
             <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
               <span className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4" />
@@ -679,7 +679,7 @@ export function StepSequencer({
 
         {/* Add Sound Line Selector Popup */}
         {isAddLineOpen && (
-          <div className="bg-slate-950 border-2 border-emerald-500/60 p-4 space-y-3 shadow-2xl">
+          <div className="studio-panel border-2 border-emerald-500/60 p-4 space-y-3 shadow-2xl">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-emerald-400 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
@@ -707,7 +707,7 @@ export function StepSequencer({
 
         {/* Interactive Helper Piano Keys for Melody & Bass - Collapsible */}
         {selectedTrack !== 'drums' && showKeyboard && (
-            <div className="bg-slate-950 border border-slate-800 p-3 space-y-2 relative transition-all">
+            <div className="studio-panel border p-3 space-y-2 relative transition-all">
               {selectedTrack === 'chords' ? (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs font-mono">
@@ -772,7 +772,7 @@ export function StepSequencer({
       </div>
 
       {/* Visual Step Sequencer Grid with Big Glowing Step Pads */}
-      <div className="w-full max-w-full min-w-0 bg-slate-900 border border-slate-800 p-4 space-y-3 shadow-2xl overflow-x-auto">
+      <div className="studio-panel w-full max-w-full min-w-0 border p-4 space-y-3 shadow-2xl overflow-x-auto">
         {/* Bar & Step Ruler */}
         <div
           className="min-w-180 grid gap-1.5 font-mono text-[10px] mb-1"
@@ -783,7 +783,7 @@ export function StepSequencer({
           {Array.from({ length: totalBars }).map((_, barIdx) => (
             <div
               key={barIdx}
-              className="bg-slate-950 border border-slate-800 text-slate-400 font-bold px-2 py-1 text-center tracking-wider"
+              className="studio-inset border text-slate-400 font-bold px-2 py-1 text-center tracking-wider"
               style={{ gridColumn: `span ${Math.min(16, composition.stepsCount - barIdx * 16)}` }}
             >
               BAR {barIdx + 1}

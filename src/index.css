@@ -130,6 +130,38 @@ input[type='range'] {
   border-color: var(--color-border);
 }
 
+.studio-panel {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.studio-sidebar {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.studio-app {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.studio-footer {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-subtle);
+}
+
+.studio-inset {
+  background: var(--color-surface-inset);
+  border-color: var(--color-border);
+}
+
+.studio-muted {
+  color: var(--color-muted);
+}
+
 .studio-divider {
   border-color: var(--color-divider);
 }

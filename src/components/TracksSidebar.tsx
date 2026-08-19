@@ -118,9 +118,9 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
   };
 
   return (
-    <aside className="w-64 bg-slate-950 border-r border-slate-800 text-slate-200 flex flex-col shrink-0 select-none h-screen sticky top-0 overflow-hidden font-sans shadow-2xl">
+    <aside className="studio-sidebar w-64 border-r flex flex-col shrink-0 select-none h-screen sticky top-0 overflow-hidden font-sans shadow-2xl">
       {/* Sidebar Header with Quick Add Actions */}
-      <div className="px-3.5 py-2.5 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
+      <div className="studio-toolbar px-3.5 py-2.5 border-b flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <Sliders className="w-3.5 h-3.5 text-sky-400" />
           <div>
