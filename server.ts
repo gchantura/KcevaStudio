@@ -135,7 +135,9 @@ public:
 
 // Vite middleware configuration
 async function start() {
-  if (process.env.NODE_ENV !== 'production') {
+  const isDevelopment = process.env.NODE_ENV === 'development' || process.argv.some((argument) => argument.endsWith('server.ts'));
+
+  if (isDevelopment) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
@@ -143,8 +145,12 @@ async function start() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    app.use(express.static(distPath, { maxAge: '1d' }));
     app.get('*', (req, res) => {
+      if (req.path !== '/') {
+        res.status(404).type('text/plain').send('Not Found');
+        return;
+      }
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }

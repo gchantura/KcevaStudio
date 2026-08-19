@@ -143,9 +143,9 @@ export function Header({
             )}
             <div className="flex items-center gap-1.5">
               <Disc3 className={`w-4 h-4 text-slate-400 ${isPlaying ? 'animate-spin' : ''}`} />
-              <h1 className="text-sm font-black tracking-tight text-slate-200">
+              <span className="text-sm font-black tracking-tight text-slate-200">
                 Kceva <span className="text-slate-500 font-medium text-xs">Studio</span>
-              </h1>
+              </span>
               {isAutosaving && (
                 <span className="flex items-center gap-0.5 text-[9px] font-mono text-slate-500">
                   <CheckCircle2 className="w-2.5 h-2.5" />

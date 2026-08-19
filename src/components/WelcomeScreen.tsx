@@ -13,9 +13,9 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onCreate }) => {
           <Play className="w-8 h-8 text-white fill-current" />
         </div>
         <div>
-          <h1 className="text-3xl font-black tracking-tight">
+          <h2 className="text-3xl font-black tracking-tight">
             <span className="bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">KCEVA</span> STUDIO
-          </h1>
+          </h2>
           <p className="text-sm text-slate-400 mt-2">
             Professional DSP Music Production Studio • kceva.com
           </p>

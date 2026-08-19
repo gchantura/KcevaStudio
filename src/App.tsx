@@ -1,22 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
+import { lazy, Suspense, useState, useEffect, useCallback } from 'react';
 import { MusicComposition, ViewTab, FxConfig, SynthPatch, CustomSoundLine } from './types';
 import { SONG_PRESETS } from './audio/songPresets';
 import { audioDsp } from './audio/dspEngine';
 import { Header } from './components/Header';
 import { TracksSidebar } from './components/TracksSidebar';
 import { VocalPickerModal } from './components/VocalPickerModal';
-import { AudioVisualizer } from './components/AudioVisualizer';
-import { MidiControllerBar } from './components/MidiControllerBar';
-import { StepSequencer } from './components/StepSequencer';
-
-import { PianoRollPro } from './components/PianoRollPro';
-import { SampleRack } from './components/SampleRack';
-import { AudioRecorderTrack } from './components/AudioRecorderTrack';
-import { ProMixer } from './components/ProMixer';
-import { SongArranger } from './components/SongArranger';
-import { SynthControls } from './components/SynthControls';
-import { CppPlayground } from './components/CppPlayground';
-import { PresetLibrary } from './components/PresetLibrary';
+const AudioVisualizer = lazy(() => import('./components/AudioVisualizer').then(({ AudioVisualizer }) => ({ default: AudioVisualizer })));
+const MidiControllerBar = lazy(() => import('./components/MidiControllerBar').then(({ MidiControllerBar }) => ({ default: MidiControllerBar })));
+const StepSequencer = lazy(() => import('./components/StepSequencer').then(({ StepSequencer }) => ({ default: StepSequencer })));
+const PianoRollPro = lazy(() => import('./components/PianoRollPro').then(({ PianoRollPro }) => ({ default: PianoRollPro })));
+const SampleRack = lazy(() => import('./components/SampleRack').then(({ SampleRack }) => ({ default: SampleRack })));
+const AudioRecorderTrack = lazy(() => import('./components/AudioRecorderTrack').then(({ AudioRecorderTrack }) => ({ default: AudioRecorderTrack })));
+const ProMixer = lazy(() => import('./components/ProMixer').then(({ ProMixer }) => ({ default: ProMixer })));
+const SongArranger = lazy(() => import('./components/SongArranger').then(({ SongArranger }) => ({ default: SongArranger })));
+const SynthControls = lazy(() => import('./components/SynthControls').then(({ SynthControls }) => ({ default: SynthControls })));
+const CppPlayground = lazy(() => import('./components/CppPlayground').then(({ CppPlayground }) => ({ default: CppPlayground })));
+const PresetLibrary = lazy(() => import('./components/PresetLibrary').then(({ PresetLibrary }) => ({ default: PresetLibrary })));
 
 import { ClearModal } from './components/ClearModal';
 import { WelcomeScreen } from './components/WelcomeScreen';
@@ -24,14 +23,44 @@ import { defaultProject, createDefaultCustomLine } from './utils/defaultProject'
 import { NewProjectModal } from './components/NewProjectModal';
 import { SaveProjectModal } from './components/SaveProjectModal';
 import { ExportHubModal } from './components/ExportHubModal';
-import { DjConsoleDeck } from './components/DjConsoleDeck';
-import { InstrumentVoiceRack } from './components/InstrumentVoiceRack';
-import { TimelineArranger } from './components/TimelineArranger';
+const DjConsoleDeck = lazy(() => import('./components/DjConsoleDeck').then(({ DjConsoleDeck }) => ({ default: DjConsoleDeck })));
+const InstrumentVoiceRack = lazy(() => import('./components/InstrumentVoiceRack').then(({ InstrumentVoiceRack }) => ({ default: InstrumentVoiceRack })));
+const TimelineArranger = lazy(() => import('./components/TimelineArranger').then(({ TimelineArranger }) => ({ default: TimelineArranger })));
 import { ShortcutsModal } from './components/ShortcutsModal';
 import { QuickActionsToolbar } from './components/QuickActionsToolbar';
 import { TutorialOverlay } from './components/TutorialOverlay';
 
 const AUTOSAVE_STORAGE_KEY = 'kceva_music_studio_autosave_v1';
+
+const PAGE_TITLES: Record<ViewTab, string> = {
+  timeline: 'Timeline Arranger',
+  studio: 'Beat Sequencer',
+  piano_roll: 'Piano Roll',
+  sound_explorer: 'Synth and Sound Explorer',
+  mixer: 'Multi-Track Mixer',
+  dj_deck: 'DJ Performance Deck',
+  presets: 'Music Presets',
+  samples: 'Sample Rack',
+  audio_rec: 'Audio Recorder',
+  arranger: 'Song Arranger',
+  synths: 'Synth Controls',
+  cpp_dsp: 'C++ DSP Playground',
+};
+
+const PAGE_DESCRIPTIONS: Record<ViewTab, string> = {
+  timeline: 'Arrange clips and build complete songs in Kceva\'s browser-based music production studio.',
+  studio: 'Create drum patterns, melodies, and beats with Kceva\'s online music generator sequencer.',
+  piano_roll: 'Compose and edit melodies with an interactive piano roll inside Kceva Music Generator Studio.',
+  sound_explorer: 'Explore synth voices and shape custom sounds in Kceva\'s online music production studio.',
+  mixer: 'Balance multi-track channels and master your browser-made songs with Kceva\'s music mixer.',
+  dj_deck: 'Perform and manipulate your generated tracks with Kceva\'s browser-based DJ deck.',
+  presets: 'Browse genre presets and start new compositions in Kceva Music Generator Studio.',
+  samples: 'Browse and shape samples for your next browser-based music production project.',
+  audio_rec: 'Record audio takes and combine them with generated tracks in Kceva Music Generator Studio.',
+  arranger: 'Organize song sections and turn musical ideas into complete arrangements in your browser.',
+  synths: 'Design lead, bass, and effects patches with Kceva\'s browser-based synthesizer controls.',
+  cpp_dsp: 'Experiment with real-time C++ DSP synthesis concepts inside Kceva Music Generator Studio.',
+};
 
 const getInitialComposition = (): MusicComposition => {
   try {
@@ -87,6 +116,12 @@ export default function App() {
     }, 500);
     return () => clearTimeout(timer);
   }, [composition]);
+
+  useEffect(() => {
+    document.title = `${PAGE_TITLES[activeTab]} | Kceva Music Generator Studio`;
+    const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    description?.setAttribute('content', PAGE_DESCRIPTIONS[activeTab]);
+  }, [activeTab]);
 
   // ----- Track control handlers (Core + Custom Lines) -----
   const handleToggleMute = useCallback((id: string) => {
@@ -494,7 +529,20 @@ export default function App() {
         />
 
         {/* Main Studio Viewport */}
-        <main className="flex-1 w-full p-4 sm:p-6 space-y-6">
+        <Suspense
+          fallback={
+            <main className="flex-1 w-full p-6 text-sm text-slate-400" aria-live="polite">
+              Loading studio view...
+            </main>
+          }
+        >
+          <main className="flex-1 w-full p-4 sm:p-6 space-y-6">
+          <section aria-labelledby="studio-heading" className="border-b border-slate-800/80 pb-3">
+            <h1 id="studio-heading" className="text-lg font-bold text-slate-100">Online Music Generator Studio</h1>
+            <p className="mt-1 max-w-3xl text-sm text-slate-400">
+              Create beats, melodies, chord progressions, synth sounds, and complete multi-track songs in your browser with Kceva.
+            </p>
+          </section>
           {/* Real-time Oscilloscope & Frequency Spectrum Visualizer */}
           <AudioVisualizer isPlaying={isPlaying} />
 
@@ -614,7 +662,8 @@ export default function App() {
               />
             </div>
           )}
-        </main>
+          </main>
+        </Suspense>
 
         {/* Footer */}
         <footer className="border-t border-slate-800/80 bg-slate-950/60 py-3 text-center text-xs text-slate-500 font-mono">
