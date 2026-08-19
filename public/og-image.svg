@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Kceva Music Generator Studio</title>
+  <desc id="description">Online music generator studio for beats, melodies, synth sounds, and multi-track songs.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#020617"/>
+      <stop offset="0.55" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#082f49"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#a5f3fc"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <path d="M0 510c180-90 290 60 470-30s290-25 430-90 205-35 300-15v255H0Z" fill="#0c4a6e" opacity=".35"/>
+  <g transform="translate(100 150)">
+    <circle cx="78" cy="78" r="68" fill="none" stroke="url(#accent)" stroke-width="14"/>
+    <path d="M78 20v82m0 0a23 23 0 1 1-23-23 23 23 0 0 1 23 23Zm0-59 48-15v80" fill="none" stroke="#e0f2fe" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="100" y="380" fill="#f8fafc" font-family="sans-serif" font-size="74" font-weight="800">KCEVA</text>
+  <text x="100" y="450" fill="#7dd3fc" font-family="sans-serif" font-size="42" font-weight="600">Music Generator Studio</text>
+  <text x="100" y="520" fill="#cbd5e1" font-family="sans-serif" font-size="26">Beats · melodies · synths · multi-track production</text>
+</svg>
