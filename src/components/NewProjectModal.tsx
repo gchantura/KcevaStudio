@@ -120,8 +120,13 @@ export function NewProjectModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl p-6 shadow-2xl space-y-5 my-8">
+    <div className="studio-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
+      <div
+        className="studio-modal border rounded-2xl w-full max-w-xl p-6 shadow-2xl space-y-5 my-8"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="new-project-modal-title"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2.5">
@@ -129,7 +134,7 @@ export function NewProjectModal({
               <PlusCircle className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-100">Create New Project</h2>
+              <h2 id="new-project-modal-title" className="text-base font-bold">Create New Project</h2>
               <p className="text-xs text-slate-400">Start fresh from blank or pick a starting template</p>
             </div>
           </div>
@@ -150,7 +155,7 @@ export function NewProjectModal({
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500 font-medium"
+                className="studio-input w-full border rounded-xl px-3 py-2 text-sm focus:border-sky-500 font-medium"
                 placeholder="e.g. Midnight Cyber Drive"
               />
             </div>
@@ -160,14 +165,14 @@ export function NewProjectModal({
                 type="text"
                 value={genre}
                 onChange={(e) => setGenre(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-sky-500"
+                className="studio-input w-full border rounded-xl px-3 py-2 text-sm focus:border-sky-500"
                 placeholder="e.g. Synthwave, Techno, Lo-Fi"
               />
             </div>
           </div>
 
           {/* Musical Settings */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+          <div className="studio-inset grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 rounded-xl border">
             <div>
               <label className="block text-[11px] font-mono uppercase text-slate-400 mb-1">Tempo (BPM)</label>
               <input
@@ -176,7 +181,7 @@ export function NewProjectModal({
                 max="220"
                 value={tempo}
                 onChange={(e) => setTempo(parseInt(e.target.value, 10) || 120)}
-                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-mono font-bold text-sky-400 text-center"
+                className="studio-input w-full border rounded-lg px-2.5 py-1.5 text-xs font-mono font-bold text-sky-400 text-center"
               />
             </div>
 
@@ -185,7 +190,7 @@ export function NewProjectModal({
               <select
                 value={key}
                 onChange={(e) => setKey(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-mono text-slate-200"
+                className="studio-input w-full border rounded-lg px-2 py-1.5 text-xs font-mono"
               >
                 {NOTE_NAMES.map((k) => (
                   <option key={k} value={k}>
@@ -200,7 +205,7 @@ export function NewProjectModal({
               <select
                 value={scale}
                 onChange={(e) => setScale(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200"
+                className="studio-input w-full border rounded-lg px-2.5 py-1.5 text-xs font-mono"
               >
                 {Object.keys(SCALES).map((s) => (
                   <option key={s} value={s}>

@@ -23,8 +23,13 @@ export function ClearModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5">
+    <div className="studio-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-150">
+      <div
+        className="studio-modal border rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="clear-modal-title"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2.5">
@@ -32,7 +37,7 @@ export function ClearModal({
               <Trash2 className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-100">Clear & Reset Options</h2>
+              <h2 id="clear-modal-title" className="text-base font-bold">Clear & Reset Options</h2>
               <p className="text-xs text-slate-400">Choose what you want to wipe or reset</p>
             </div>
           </div>

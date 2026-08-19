@@ -104,8 +104,13 @@ export function SaveProjectModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl p-6 shadow-2xl space-y-5 my-8">
+    <div className="studio-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
+      <div
+        className="studio-modal border rounded-2xl w-full max-w-xl p-6 shadow-2xl space-y-5 my-8"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="save-project-modal-title"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2.5">
@@ -113,7 +118,7 @@ export function SaveProjectModal({
               <Save className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-100">Save & Project Manager</h2>
+              <h2 id="save-project-modal-title" className="text-base font-bold">Save & Project Manager</h2>
               <p className="text-xs text-slate-400">Save to your browser library or backup to JSON file</p>
             </div>
           </div>
@@ -126,7 +131,7 @@ export function SaveProjectModal({
         </div>
 
         {/* Current Project Save Bar */}
-        <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-3">
+        <div className="studio-inset p-4 rounded-xl border space-y-3">
           <label className="block text-xs font-semibold text-slate-300">Save Current Project</label>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
@@ -134,7 +139,7 @@ export function SaveProjectModal({
               value={saveName}
               onChange={(e) => setSaveName(e.target.value)}
               placeholder="Project Name..."
-              className="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-medium"
+              className="studio-input flex-1 border rounded-xl px-3 py-2 text-sm focus:border-emerald-500 font-medium"
             />
             <button
               onClick={handleSaveToBrowser}
@@ -163,13 +168,13 @@ export function SaveProjectModal({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             onClick={handleDownloadJson}
-            className="flex items-center justify-center gap-2 p-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-medium transition"
+            className="studio-inset flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-medium transition"
           >
             <Download className="w-4 h-4 text-sky-400" />
             <span>Download Project File (.json)</span>
           </button>
 
-          <label className="flex items-center justify-center gap-2 p-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-slate-200 text-xs font-medium cursor-pointer transition">
+          <label className="studio-inset flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-medium cursor-pointer transition">
             <Upload className="w-4 h-4 text-purple-400" />
             <span>Import Project (.json)</span>
             <input type="file" accept=".json" onChange={handleImportJson} className="hidden" />

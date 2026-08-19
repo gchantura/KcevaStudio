@@ -153,6 +153,16 @@ input[type='range'] {
   color: var(--color-subtle);
 }
 
+.studio-modal-backdrop {
+  background: rgb(2 6 23 / 0.72);
+}
+
+.studio-modal {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
 .studio-inset {
   background: var(--color-surface-inset);
   border-color: var(--color-border);
