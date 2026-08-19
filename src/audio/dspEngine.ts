@@ -362,8 +362,8 @@ class DspEngine {
   }
 
   // Generate algorithmic impulse response for reverb
-  private createImpulseResponse(duration: number, decay: number): AudioBuffer {
-    const ctx = this.audioCtx || new (window.AudioContext || (window as any).webkitAudioContext)();
+  private createImpulseResponse(duration: number, decay: number, targetCtx?: BaseAudioContext): AudioBuffer {
+    const ctx = targetCtx || this.audioCtx || new (window.AudioContext || (window as any).webkitAudioContext)();
     const sampleRate = ctx.sampleRate;
     const length = sampleRate * duration;
     const impulse = ctx.createBuffer(2, length, sampleRate);
@@ -996,7 +996,7 @@ public playSynthesizerNote(
 
     // Offline Reverb Bus
     const offlineReverb = offlineCtx.createConvolver();
-    offlineReverb.buffer = this.createImpulseResponse(comp.fxSettings?.reverbDecay || 2.5, 2.0);
+    offlineReverb.buffer = this.createImpulseResponse(comp.fxSettings?.reverbDecay || 2.5, 2.0, offlineCtx);
     const offlineReverbWet = offlineCtx.createGain();
     offlineReverbWet.gain.setValueAtTime(comp.fxSettings?.reverbWet || 0.25, 0);
     offlineReverb.connect(offlineReverbWet);

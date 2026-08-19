@@ -148,7 +148,7 @@ export function PianoKeyboard({
       </div>
 
       {/* Piano Keys Visualizer */}
-      <div className="relative flex justify-center items-stretch h-32 select-none pt-1 overflow-x-auto">
+      <div className="relative flex justify-center items-stretch h-32 select-none pt-1 overflow-hidden">
         <div className="flex relative">
           {keys.map((k) => {
             const isPlayingThis = activeNotes.has(k.noteStr);

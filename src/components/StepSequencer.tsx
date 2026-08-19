@@ -419,7 +419,7 @@ export function StepSequencer({
   const totalBars = Math.ceil(composition.stepsCount / 16);
 
   return (
-    <div id="step-sequencer" className="space-y-4">
+    <div id="step-sequencer" className="min-w-0 max-w-full space-y-4">
       {/* Visual Track Selector Ribbon */}
       <div className="bg-slate-900 border border-slate-800 p-3 space-y-3 shadow-xl">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -784,7 +784,7 @@ export function StepSequencer({
       </div>
 
       {/* Visual Step Sequencer Grid with Big Glowing Step Pads */}
-      <div className="bg-slate-900 border border-slate-800 p-4 space-y-3 shadow-2xl overflow-x-auto">
+      <div className="w-full max-w-full min-w-0 bg-slate-900 border border-slate-800 p-4 space-y-3 shadow-2xl overflow-x-auto">
         {/* Bar & Step Ruler */}
         <div
           className="min-w-[720px] grid gap-1.5 font-mono text-[10px] mb-1"
@@ -833,7 +833,7 @@ export function StepSequencer({
 
         {/* ================= DRUM MACHINE GRID ================= */}
         {selectedTrack === 'drums' ? (
-          <div className="min-w-[720px] space-y-2">
+          <div className="w-max min-w-[720px] space-y-2">
             {[
               { id: 'kick', name: 'Kick 808', color: 'bg-amber-500 border-amber-300 text-slate-950' },
               { id: 'snare', name: 'Snare / Clap', color: 'bg-rose-500 border-rose-300 text-white' },
@@ -889,7 +889,7 @@ export function StepSequencer({
           </div>
         ) : selectedTrack === 'chords' ? (
           /* ================= CHORD TRACK GRID ================= */
-          <div className="min-w-[720px] space-y-2">
+          <div className="w-max min-w-[720px] space-y-2">
             <div className="flex items-center gap-3">
               <div className="w-32 py-3 px-3 bg-slate-950 border border-slate-800 text-purple-400 font-black text-xs font-mono shrink-0">
                 CHORD LINE
@@ -928,7 +928,7 @@ export function StepSequencer({
           </div>
         ) : (
           /* ================= MELODIC & BASS NOTE GRID ================= */
-          <div className="min-w-[720px] space-y-1.5 max-h-[440px] overflow-y-auto pr-1">
+          <div className="w-max min-w-[720px] space-y-1.5 pr-1">
             {(selectedTrack === 'bass' ? bassNotes : scaleNotes)
               .slice()
               .reverse()

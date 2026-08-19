@@ -509,7 +509,7 @@ export default function App() {
       )}
 
       {/* Main content column */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="min-w-0 flex-1 flex flex-col min-h-screen">
         {/* Welcome screen for beginners */}
         {showWelcome && (
           <WelcomeScreen
@@ -548,7 +548,7 @@ export default function App() {
             </main>
           }
         >
-          <main className="flex-1 w-full p-4 sm:p-6 space-y-6">
+          <main className="min-w-0 flex-1 w-full max-w-full overflow-x-hidden p-4 sm:p-6 space-y-6">
           <section aria-labelledby="studio-heading" className="border-b border-slate-800/80 pb-3">
             <h1 id="studio-heading" className="text-lg font-bold text-slate-100">Online Music Generator Studio</h1>
             <p className="mt-1 max-w-3xl text-sm text-slate-400">

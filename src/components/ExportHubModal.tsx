@@ -38,12 +38,28 @@ export function ExportHubModal({
   const [copiedCpp, setCopiedCpp] = useState(false);
   const [previewAudioUrl, setPreviewAudioUrl] = useState<string | null>(null);
   const [isPlayingPreview, setIsPlayingPreview] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
 
   if (!isOpen) return null;
 
+  const downloadBlob = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.style.display = 'none';
+    document.body.appendChild(anchor);
+    anchor.click();
+    window.setTimeout(() => {
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    }, 1000);
+  };
+
   const handleGeneratePreview = async () => {
     setIsExportingWav(true);
+    setExportError(null);
     try {
       const blob = await audioDsp.exportToWav(composition);
       const url = URL.createObjectURL(blob);
@@ -51,6 +67,7 @@ export function ExportHubModal({
       setIsPlayingPreview(true);
     } catch (err) {
       console.error('Preview render error:', err);
+      setExportError('Audio preview could not be rendered. Please try again.');
     } finally {
       setIsExportingWav(false);
     }
@@ -58,16 +75,13 @@ export function ExportHubModal({
 
   const exportWavFile = async () => {
     setIsExportingWav(true);
+    setExportError(null);
     try {
       const blob = await audioDsp.exportToWav(composition);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${composition.title.toLowerCase().replace(/\s+/g, '_')}_master.wav`;
-      a.click();
-      URL.revokeObjectURL(url);
+      downloadBlob(blob, `${composition.title.toLowerCase().replace(/\s+/g, '_')}_master.wav`);
     } catch (err) {
       console.error('WAV export error:', err);
+      setExportError('WAV export failed. Please try again.');
     } finally {
       setIsExportingWav(false);
     }
@@ -75,6 +89,7 @@ export function ExportHubModal({
 
   const exportAllStems = async () => {
     setIsExportingStems(true);
+    setExportError(null);
     setStemsProgress('Initializing offline stem rendering engine...');
     try {
       const stems = await renderAllStems(composition, (info) => {
@@ -85,18 +100,14 @@ export function ExportHubModal({
     } catch (err) {
       console.error('Stem rendering error:', err);
       setStemsProgress('Error rendering stems.');
+      setExportError('Stem export failed. Please try again.');
     } finally {
       setIsExportingStems(false);
     }
   };
 
   const downloadSingleStem = (stem: RenderedStem) => {
-    const url = URL.createObjectURL(stem.blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${composition.title.toLowerCase().replace(/\s+/g, '_')}_${stem.name}`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(stem.blob, `${composition.title.toLowerCase().replace(/\s+/g, '_')}_${stem.name}`);
   };
 
   const downloadAllRenderedStems = () => {
@@ -109,12 +120,7 @@ export function ExportHubModal({
 
   const exportMidiFile = () => {
     const blob = audioDsp.exportToMidi(composition);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${composition.title.toLowerCase().replace(/\s+/g, '_')}.mid`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(blob, `${composition.title.toLowerCase().replace(/\s+/g, '_')}.mid`);
   };
 
   const exportCppHeaderFile = () => {
@@ -163,22 +169,12 @@ public:
 `;
 
     const blob = new Blob([cppCode], { type: 'text/x-c++src' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${composition.title.toLowerCase().replace(/\s+/g, '_')}_DspEngine.hpp`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadBlob(blob, `${composition.title.toLowerCase().replace(/\s+/g, '_')}_DspEngine.hpp`);
   };
 
   const exportJsonProject = () => {
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(composition, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', `${composition.title.toLowerCase().replace(/\s+/g, '_')}_project.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
+    const blob = new Blob([JSON.stringify(composition, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, `${composition.title.toLowerCase().replace(/\s+/g, '_')}_project.json`);
   };
 
   return (
@@ -234,6 +230,12 @@ public:
                 className="h-7 w-56 accent-sky-400"
               />
             </div>
+          </div>
+        )}
+
+        {exportError && (
+          <div role="alert" className="rounded border border-rose-500/50 bg-rose-950/40 px-3 py-2 text-xs text-rose-200">
+            {exportError}
           </div>
         )}
 
