@@ -22,6 +22,9 @@ import {
   Wand2,
   Shuffle,
   Volume1,
+  Home,
+  Zap,
+  CloudSun,
 } from 'lucide-react';
 import { PianoKeyboard } from './PianoKeyboard';
 
@@ -475,7 +478,7 @@ export function StepSequencer({
             {/* + Add Line Button */}
             <button
               onClick={() => setIsAddLineOpen(!isAddLineOpen)}
-              className="px-3 py-2 text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white flex items-center gap-1.5 shadow-md shadow-emerald-950/30"
+              className="px-3 py-2 text-xs font-bold bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white flex items-center gap-1.5 shadow-md shadow-emerald-950/30"
             >
               <Plus className="w-4 h-4" />
               <span>+ ADD SOUND LINE</span>
@@ -488,7 +491,8 @@ export function StepSequencer({
             {selectedTrack !== 'drums' && (
               <button
                 onClick={() => setShowKeyboard(!showKeyboard)}
-                className={`px-2.5 py-1.5 border rounded font-bold flex items-center gap-1.5 transition ${
+                aria-label={showKeyboard ? 'Hide keyboard' : 'Show keyboard'}
+                className={`w-8 h-8 p-0 justify-center border rounded font-bold flex items-center transition ${
                   showKeyboard
                     ? 'bg-slate-950 text-sky-400 border-sky-800/80 hover:bg-slate-900'
                     : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
@@ -496,44 +500,45 @@ export function StepSequencer({
                 title={showKeyboard ? 'Hide Test Sound Keyboard' : 'Show Test Sound Keyboard'}
               >
                 <Keyboard className="w-3.5 h-3.5" />
-                <span>{showKeyboard ? 'Hide Keys' : 'Test Keys'}</span>
               </button>
             )}
 
             {/* Euclidean Polyrhythm Tool */}
             <button
               onClick={() => setIsEuclideanOpen(!isEuclideanOpen)}
-              className="px-2.5 py-1.5 bg-slate-950 hover:bg-sky-950 text-sky-400 border border-slate-800 hover:border-sky-800 rounded font-bold flex items-center gap-1 transition"
+              aria-label="Euclidean rhythm"
+              className="w-8 h-8 p-0 justify-center bg-slate-950 hover:bg-sky-950 text-sky-400 border border-slate-800 hover:border-sky-800 rounded font-bold flex items-center transition"
               title="Euclidean Polyrhythm Pulse Generator"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Euclidean</span>
             </button>
 
             {/* Arpeggiator (for melody, bass, synth lines) */}
             {selectedTrack !== 'drums' && selectedTrack !== 'chords' && (
               <div className="flex items-center bg-slate-950 border border-slate-800 rounded p-0.5">
-                <span className="text-[9px] text-slate-400 font-bold px-1.5">ARP:</span>
                 <button
                   onClick={() => applyArpeggiator('up')}
-                  className="px-1.5 py-0.5 hover:bg-slate-800 text-slate-300 hover:text-white rounded text-[10px] flex items-center gap-0.5"
+                  aria-label="Arpeggiate up"
+                  className="w-8 h-8 p-0 justify-center hover:bg-slate-800 text-slate-300 hover:text-white rounded text-[10px] flex items-center"
                   title="Arpeggiate Up"
                 >
-                  <ArrowRight className="w-2.5 h-2.5 -rotate-45" /> Up
+                  <ArrowRight className="w-3 h-3 -rotate-45" />
                 </button>
                 <button
                   onClick={() => applyArpeggiator('down')}
-                  className="px-1.5 py-0.5 hover:bg-slate-800 text-slate-300 hover:text-white rounded text-[10px] flex items-center gap-0.5"
+                  aria-label="Arpeggiate down"
+                  className="w-8 h-8 p-0 justify-center hover:bg-slate-800 text-slate-300 hover:text-white rounded text-[10px] flex items-center"
                   title="Arpeggiate Down"
                 >
-                  <ArrowRight className="w-2.5 h-2.5 rotate-45" /> Down
+                  <ArrowRight className="w-3 h-3 rotate-45" />
                 </button>
                 <button
                   onClick={() => applyArpeggiator('random')}
-                  className="px-1.5 py-0.5 hover:bg-slate-800 text-slate-300 hover:text-white rounded text-[10px] flex items-center gap-0.5"
+                  aria-label="Random arpeggio"
+                  className="w-8 h-8 p-0 justify-center hover:bg-slate-800 text-slate-300 hover:text-white rounded text-[10px] flex items-center"
                   title="Random Arp"
                 >
-                  <Shuffle className="w-2.5 h-2.5" /> Rand
+                  <Shuffle className="w-3 h-3" />
                 </button>
               </div>
             )}
@@ -542,15 +547,16 @@ export function StepSequencer({
             <div className="flex items-center bg-slate-950 border border-slate-800 rounded p-0.5">
               <button
                 onClick={() => shiftPattern('left')}
-                className="px-1.5 py-0.5 hover:bg-slate-800 text-slate-300 hover:text-white rounded text-[10px]"
+                aria-label="Shift pattern left"
+                className="w-8 h-8 p-0 justify-center hover:bg-slate-800 text-slate-300 hover:text-white rounded text-[10px] flex items-center"
                 title="Shift Pattern Left 1 Step"
               >
                 <ArrowLeft className="w-3 h-3" />
               </button>
-              <span className="text-[9px] text-slate-400 px-1 font-bold">Shift</span>
               <button
                 onClick={() => shiftPattern('right')}
-                className="px-1.5 py-0.5 hover:bg-slate-800 text-slate-300 hover:text-white rounded text-[10px]"
+                aria-label="Shift pattern right"
+                className="w-8 h-8 p-0 justify-center hover:bg-slate-800 text-slate-300 hover:text-white rounded text-[10px] flex items-center"
                 title="Shift Pattern Right 1 Step"
               >
                 <ArrowRight className="w-3 h-3" />
@@ -560,11 +566,11 @@ export function StepSequencer({
             {/* Humanize Velocity & Swing */}
             <button
               onClick={applyHumanize}
-              className="px-2 py-1 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded text-xs font-semibold flex items-center gap-1 transition"
+              aria-label="Humanize pattern"
+              className="w-8 h-8 p-0 justify-center bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded text-xs font-semibold flex items-center transition"
               title="Apply human groove dynamics & velocity variance"
             >
               <Wand2 className="w-3.5 h-3.5 text-amber-400" />
-              <span>Humanize</span>
             </button>
 
             {/* Auto Drum Beat Fillers or Randomizer */}
@@ -572,40 +578,46 @@ export function StepSequencer({
               <div className="flex items-center gap-1 bg-slate-950 p-0.5 border border-slate-800 rounded">
                 <button
                   onClick={() => handleAutoFillDrums('club_house')}
-                  className="px-2 py-0.5 bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-bold rounded"
+                  aria-label="House beat"
+                  title="House beat"
+                  className="w-8 h-8 p-0 justify-center bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-bold rounded flex items-center"
                 >
-                  House
+                  <Home className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => handleAutoFillDrums('trap_beat')}
-                  className="px-2 py-0.5 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-bold rounded"
+                  aria-label="Trap beat"
+                  title="Trap beat"
+                  className="w-8 h-8 p-0 justify-center bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-bold rounded flex items-center"
                 >
-                  Trap
+                  <Zap className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => handleAutoFillDrums('chill_groove')}
-                  className="px-2 py-0.5 bg-teal-600 hover:bg-teal-500 text-white text-[10px] font-bold rounded"
+                  aria-label="Chill groove"
+                  title="Chill groove"
+                  className="w-8 h-8 p-0 justify-center bg-teal-600 hover:bg-teal-500 text-white text-[10px] font-bold rounded flex items-center"
                 >
-                  Chill
+                  <CloudSun className="w-3.5 h-3.5" />
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => handleRandomizeTrack(selectedTrack)}
-                className="px-2.5 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded flex items-center gap-1 shadow-sm transition"
+                aria-label="Randomize track"
+                className="w-8 h-8 p-0 justify-center bg-purple-600 hover:bg-purple-500 text-white font-bold rounded flex items-center shadow-sm transition"
                 title="Generate Random Catchy Pattern"
               >
                 <Shuffle className="w-3.5 h-3.5" />
-                <span>Randomize</span>
               </button>
             )}
 
             <button
               onClick={() => clearTrack(selectedTrack)}
-              className="px-2.5 py-1.5 bg-slate-950 hover:bg-rose-950 text-slate-400 hover:text-rose-300 border border-slate-800 hover:border-rose-900 rounded transition flex items-center gap-1 font-bold"
+              aria-label="Clear track"
+                className="w-8 h-8 p-0 justify-center bg-slate-950 hover:bg-rose-950 text-slate-400 hover:text-rose-300 border border-slate-800 hover:border-rose-900 rounded transition flex items-center font-bold"
             >
               <Trash2 className="w-3.5 h-3.5 text-rose-400" />
-              <span>Clear</span>
             </button>
           </div>
         </div>
@@ -678,7 +690,7 @@ export function StepSequencer({
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 max-h-[220px] overflow-y-auto pr-1">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 max-h-55 overflow-y-auto pr-1">
               {INSTRUMENT_PRESETS.map((preset) => (
                 <button
                   key={preset.id}
@@ -694,8 +706,7 @@ export function StepSequencer({
         )}
 
         {/* Interactive Helper Piano Keys for Melody & Bass - Collapsible */}
-        {selectedTrack !== 'drums' && (
-          showKeyboard ? (
+        {selectedTrack !== 'drums' && showKeyboard && (
             <div className="bg-slate-950 border border-slate-800 p-3 space-y-2 relative transition-all">
               {selectedTrack === 'chords' ? (
                 <div className="space-y-2">
@@ -744,15 +755,7 @@ export function StepSequencer({
                   <div className="flex items-center justify-between text-xs font-mono pb-1">
                     <span className="text-sky-400 font-bold">CLICK KEYS TO TEST SOUND:</span>
                     <div className="flex items-center gap-3">
-                      <span className="text-slate-500 hidden sm:inline">Highlighted keys match scale ({composition.key} {composition.scale})</span>
-                      <button
-                        onClick={() => setShowKeyboard(false)}
-                        className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 rounded text-[10px] font-mono flex items-center gap-1"
-                        title="Hide Keyboard Banner"
-                      >
-                        <X className="w-3 h-3 text-rose-400" />
-                        <span>Hide</span>
-                      </button>
+                      <span className="text-slate-500 hidden sm:inline">Scale: {composition.key} {composition.scale}</span>
                     </div>
                   </div>
                   <PianoKeyboard
@@ -765,21 +768,6 @@ export function StepSequencer({
                 </div>
               )}
             </div>
-          ) : (
-            <div className="flex items-center justify-between px-3 py-1.5 bg-slate-950/60 border border-slate-800 text-xs font-mono">
-              <span className="text-slate-500 flex items-center gap-1.5">
-                <Keyboard className="w-3.5 h-3.5 text-slate-400" />
-                <span>Test Sound Keyboard is hidden</span>
-              </span>
-              <button
-                onClick={() => setShowKeyboard(true)}
-                className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-sky-400 hover:text-sky-300 border border-slate-800 rounded text-[10px] font-bold flex items-center gap-1 transition"
-              >
-                <Plus className="w-3 h-3" />
-                <span>Show Sound Test Keys</span>
-              </button>
-            </div>
-          )
         )}
       </div>
 
@@ -787,7 +775,7 @@ export function StepSequencer({
       <div className="w-full max-w-full min-w-0 bg-slate-900 border border-slate-800 p-4 space-y-3 shadow-2xl overflow-x-auto">
         {/* Bar & Step Ruler */}
         <div
-          className="min-w-[720px] grid gap-1.5 font-mono text-[10px] mb-1"
+          className="min-w-180 grid gap-1.5 font-mono text-[10px] mb-1"
           style={{
             gridTemplateColumns: `repeat(${composition.stepsCount}, minmax(28px, 1fr))`,
           }}
@@ -805,7 +793,7 @@ export function StepSequencer({
 
         {/* Step Numbers & Playhead Marker */}
         <div
-          className="min-w-[720px] grid gap-1.5 font-mono text-[10px] text-center text-slate-400 mb-2"
+          className="min-w-180 grid gap-1.5 font-mono text-[10px] text-center text-slate-400 mb-2"
           style={{
             gridTemplateColumns: `repeat(${composition.stepsCount}, minmax(28px, 1fr))`,
           }}
@@ -833,7 +821,7 @@ export function StepSequencer({
 
         {/* ================= DRUM MACHINE GRID ================= */}
         {selectedTrack === 'drums' ? (
-          <div className="w-max min-w-[720px] space-y-2">
+          <div className="w-max min-w-180 space-y-2">
             {[
               { id: 'kick', name: 'Kick 808', color: 'bg-amber-500 border-amber-300 text-slate-950' },
               { id: 'snare', name: 'Snare / Clap', color: 'bg-rose-500 border-rose-300 text-white' },
@@ -889,7 +877,7 @@ export function StepSequencer({
           </div>
         ) : selectedTrack === 'chords' ? (
           /* ================= CHORD TRACK GRID ================= */
-          <div className="w-max min-w-[720px] space-y-2">
+          <div className="w-max min-w-180 space-y-2">
             <div className="flex items-center gap-3">
               <div className="w-32 py-3 px-3 bg-slate-950 border border-slate-800 text-purple-400 font-black text-xs font-mono shrink-0">
                 CHORD LINE
@@ -928,7 +916,7 @@ export function StepSequencer({
           </div>
         ) : (
           /* ================= MELODIC & BASS NOTE GRID ================= */
-          <div className="w-max min-w-[720px] space-y-1.5 pr-1">
+          <div className="w-max min-w-180 space-y-1.5 pr-1">
             {(selectedTrack === 'bass' ? bassNotes : scaleNotes)
               .slice()
               .reverse()

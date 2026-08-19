@@ -121,8 +121,8 @@ export function PianoKeyboard({
                 {trackName} Voice
               </span>
             </h3>
-            <p className="text-[11px] text-slate-500 font-mono">
-              Use mouse or computer keys (A-W-S-E-D-F-T-G-Y-H-U-J-K | Z/X: Octave)
+            <p className="text-[10px] text-slate-500 font-mono">
+              A W S E D F T G Y H U J K • Z/X octave
             </p>
           </div>
         </div>
@@ -148,8 +148,8 @@ export function PianoKeyboard({
       </div>
 
       {/* Piano Keys Visualizer */}
-      <div className="relative flex justify-center items-stretch h-32 select-none pt-1 overflow-hidden">
-        <div className="flex relative">
+      <div className="relative flex justify-start items-stretch h-36 select-none pt-1 overflow-x-auto overflow-y-hidden scrollbar-thin">
+        <div className="flex relative min-w-170 mx-auto">
           {keys.map((k) => {
             const isPlayingThis = activeNotes.has(k.noteStr);
 
@@ -161,9 +161,9 @@ export function PianoKeyboard({
                   id={`key-${k.noteStr}`}
                   onClick={() => playNote(k.noteStr)}
                   style={{
-                    left: `${(k.index - 1) * 36 + 22}px`,
+                    left: `${(k.index - 1) * 40 + 24}px`,
                   }}
-                  className={`absolute top-0 w-7 h-20 rounded-b-md z-20 transition-all font-mono text-[9px] flex flex-col justify-end items-center pb-1 shadow-md ${
+                  className={`absolute top-0 w-8 h-24 rounded-b-md z-20 transition-all font-mono text-[9px] flex flex-col justify-end items-center pb-1 shadow-md ${
                     isPlayingThis
                       ? 'bg-sky-400 text-slate-950 scale-95 shadow-sky-400/50'
                       : k.inScale
@@ -184,7 +184,7 @@ export function PianoKeyboard({
                 key={k.noteStr}
                 id={`key-${k.noteStr}`}
                 onClick={() => playNote(k.noteStr)}
-                className={`w-9 h-32 rounded-b-lg border z-10 transition-all font-mono text-[10px] flex flex-col justify-end items-center pb-2 shadow-sm ${
+                className={`w-10 h-36 rounded-b-lg border z-10 transition-all font-mono text-[10px] flex flex-col justify-end items-center pb-2 shadow-sm ${
                   isPlayingThis
                     ? 'bg-sky-300 text-slate-950 scale-95 shadow-sky-400/50 border-sky-400'
                     : k.inScale

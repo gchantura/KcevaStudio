@@ -718,7 +718,7 @@ export const TimelineArranger: React.FC<TimelineArrangerProps> = ({
                 <div
                   key={i}
                   className="border-r border-slate-800 text-[10px] font-mono text-slate-500 font-bold flex items-center justify-start pl-1"
-                  style={{ width: `${zoomLevel}px`, shrink: 0 }}
+                  style={{ width: `${zoomLevel}px`, flexShrink: 0 }}
                 >
                   {i + 1}
                 </div>
@@ -814,7 +814,9 @@ export const TimelineArranger: React.FC<TimelineArrangerProps> = ({
                       try {
                         const item = JSON.parse(dataStr);
                         handleInsertSoundClip(track.id, item, atBar);
-                      } catch (err) {}
+                      } catch (err) {
+                        console.error('Invalid timeline clip data:', err);
+                      }
                     }
                   }}
                   className="flex-1 h-16 bg-slate-950/70 relative overflow-hidden"

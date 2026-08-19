@@ -64,6 +64,11 @@ export function PianoRollPro({
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
+  const sequenceKey = selectedTrack === 'chords' ? 'chordSequence' : `${selectedTrack}Sequence`;
+  const velocitiesKey = selectedTrack === 'chords' ? 'chordVelocities' : `${selectedTrack}Velocities`;
+  const durationsKey = selectedTrack === 'chords' ? 'chordDurations' : `${selectedTrack}Durations`;
+  const probabilitiesKey = selectedTrack === 'chords' ? 'chordProbabilities' : `${selectedTrack}Probabilities`;
+
   // Initialize track velocities/durations/probabilities if missing
   useEffect(() => {
     let needsUpdate = false;
@@ -134,9 +139,9 @@ export function PianoRollPro({
 
   // Toggle step / Note action based on active tool
   const handleStepClick = (stepIndex: number, note: string) => {
-    const seqKey = `${selectedTrack}Sequence` as const;
+    const seqKey = sequenceKey;
     const sequence = [...composition[seqKey]];
-    const velsKey = `${selectedTrack}Velocities` as const;
+    const velsKey = velocitiesKey;
     const vels = [...(composition[velsKey] || new Array(composition.stepsCount).fill(100))];
 
     if (activeTool === 'eraser') {
@@ -163,7 +168,7 @@ export function PianoRollPro({
 
   const handleStepMouseEnter = (stepIndex: number, note: string, e: MouseEvent) => {
     if (e.buttons === 1 && activeTool === 'brush') {
-      const seqKey = `${selectedTrack}Sequence` as const;
+      const seqKey = sequenceKey;
       const sequence = [...composition[seqKey]];
       sequence[stepIndex] = note;
       auditionNote(note);
@@ -176,7 +181,7 @@ export function PianoRollPro({
 
   // Transpose Track
   const handleTranspose = (semitones: number) => {
-    const seqKey = `${selectedTrack}Sequence` as const;
+    const seqKey = sequenceKey;
     const sequence = [...composition[seqKey]];
     const updated = sequence.map((note) => {
       if (!note || note === 'REST') return note;
@@ -191,7 +196,7 @@ export function PianoRollPro({
 
   // Invert Track (Flips pitch upside down around root)
   const handleInvertPitch = () => {
-    const seqKey = `${selectedTrack}Sequence` as const;
+    const seqKey = sequenceKey;
     const sequence = [...composition[seqKey]];
     const rootMidi = noteToMidi(`${composition.key}4`);
 
@@ -210,7 +215,7 @@ export function PianoRollPro({
 
   // Shift Pattern
   const handleShift = (steps: number) => {
-    const seqKey = `${selectedTrack}Sequence` as const;
+    const seqKey = sequenceKey;
     const arr = [...composition[seqKey]];
     if (steps > 0) {
       const popped = arr.pop()!;
@@ -224,7 +229,7 @@ export function PianoRollPro({
 
   // Reverse Pattern (Plays backwards)
   const handleReverse = () => {
-    const seqKey = `${selectedTrack}Sequence` as const;
+    const seqKey = sequenceKey;
     const sequence = [...composition[seqKey]].reverse();
     onUpdateComposition({
       ...composition,
@@ -234,7 +239,7 @@ export function PianoRollPro({
 
   // Humanize Velocities
   const handleHumanize = () => {
-    const velsKey = `${selectedTrack}Velocities` as const;
+    const velsKey = velocitiesKey;
     const currentVels = composition[velsKey] || new Array(composition.stepsCount).fill(100);
     const humanized = humanizeVelocities(currentVels, 15);
     onUpdateComposition({
@@ -246,7 +251,7 @@ export function PianoRollPro({
   // Auto Arpeggiator Fill
   const handleAutoArp = (mode: 'up' | 'down' | 'random' = 'up') => {
     const notes = selectedTrack === 'bass' ? getScaleNotes(composition.key, composition.scale, 1, 2) : getScaleNotes(composition.key, composition.scale, 3, 2);
-    const seqKey = `${selectedTrack}Sequence` as const;
+    const seqKey = sequenceKey;
     const newSeq: (string | null)[] = [];
 
     for (let i = 0; i < composition.stepsCount; i++) {
@@ -267,8 +272,8 @@ export function PianoRollPro({
 
   // Legato Fill (fill spaces between notes with sustained length)
   const handleLegatoFill = () => {
-    const durKey = `${selectedTrack}Durations` as const;
-    const seqKey = `${selectedTrack}Sequence` as const;
+    const durKey = durationsKey;
+    const seqKey = sequenceKey;
     const seq = composition[seqKey];
     const newDurs = new Array(composition.stepsCount).fill(1);
 
@@ -294,7 +299,7 @@ export function PianoRollPro({
 
   // Clear active track
   const handleClear = () => {
-    const seqKey = `${selectedTrack}Sequence` as const;
+    const seqKey = sequenceKey;
     onUpdateComposition({
       ...composition,
       [seqKey]: new Array(composition.stepsCount).fill(null),
@@ -304,17 +309,17 @@ export function PianoRollPro({
   // Bottom Lane drag handler for Velocity / Duration / Probability
   const handleLaneChange = (stepIdx: number, valueRatio: number) => {
     if (bottomLane === 'velocity') {
-      const velsKey = `${selectedTrack}Velocities` as const;
+      const velsKey = velocitiesKey;
       const vels = [...(composition[velsKey] || new Array(composition.stepsCount).fill(100))];
       vels[stepIdx] = Math.max(1, Math.min(127, Math.round(valueRatio * 127)));
       onUpdateComposition({ ...composition, [velsKey]: vels });
     } else if (bottomLane === 'duration') {
-      const durKey = `${selectedTrack}Durations` as const;
+      const durKey = durationsKey;
       const durs = [...(composition[durKey] || new Array(composition.stepsCount).fill(1))];
       durs[stepIdx] = Math.max(1, Math.min(8, Math.round(valueRatio * 8)));
       onUpdateComposition({ ...composition, [durKey]: durs });
     } else {
-      const probKey = `${selectedTrack}Probabilities` as const;
+      const probKey = probabilitiesKey;
       const probs = [...(composition[probKey] || new Array(composition.stepsCount).fill(100))];
       probs[stepIdx] = Math.max(0, Math.min(100, Math.round(valueRatio * 100)));
       onUpdateComposition({ ...composition, [probKey]: probs });
@@ -569,7 +574,7 @@ export function PianoRollPro({
         <div className="overflow-x-auto">
           {/* Step Measure Header Bar */}
           <div
-            className="grid text-[10px] font-mono text-slate-400 py-1 bg-slate-900 border-b border-slate-800 select-none min-w-[700px]"
+            className="grid text-[10px] font-mono text-slate-400 py-1 bg-slate-900 border-b border-slate-800 select-none min-w-175"
             style={{
               gridTemplateColumns: `112px repeat(${composition.stepsCount}, minmax(24px, 1fr))`,
             }}
@@ -604,7 +609,7 @@ export function PianoRollPro({
           {/* Note Rows Container */}
           <div
             ref={gridContainerRef}
-            className="max-h-[460px] overflow-y-auto min-w-[700px] divide-y divide-slate-900/60 select-none"
+            className="max-h-115 overflow-y-auto min-w-175 divide-y divide-slate-900/60 select-none"
           >
             {displayNotes.map((note) => {
               const isRoot = note.startsWith(composition.key);
@@ -655,7 +660,7 @@ export function PianoRollPro({
 
                   {/* 16 / 32 / 64 Step Note Grid */}
                   {Array.from({ length: composition.stepsCount }).map((_, stepIdx) => {
-                    const trackSeq = composition[`${selectedTrack}Sequence`];
+                    const trackSeq = composition[sequenceKey];
                     const isActive = trackSeq[stepIdx] === note;
                     const isCurrent = isPlaying && currentStep === stepIdx;
                     const isBeatStart = stepIdx % 4 === 0;
@@ -690,7 +695,7 @@ export function PianoRollPro({
           </div>
 
           {/* Bottom Parameter Automation Lane (Velocity Stalks) */}
-          <div className="border-t border-slate-800 bg-slate-950 p-2 space-y-1.5 select-none min-w-[700px]">
+          <div className="border-t border-slate-800 bg-slate-950 p-2 space-y-1.5 select-none min-w-175">
             <div className="flex items-center justify-between text-xs font-mono">
               {/* Lane Mode Selector */}
               <div className="flex items-center gap-1 bg-slate-900 rounded p-0.5 border border-slate-800">
@@ -743,23 +748,23 @@ export function PianoRollPro({
               </div>
               {Array.from({ length: composition.stepsCount }).map((_, stepIdx) => {
                 const isCurrent = isPlaying && currentStep === stepIdx;
-                const hasNote = Boolean(composition[`${selectedTrack}Sequence`][stepIdx]);
+                  const hasNote = Boolean(composition[sequenceKey][stepIdx]);
 
                 let valueRatio = 0.8;
                 let label = '100';
 
                 if (bottomLane === 'velocity') {
-                  const vels = composition[`${selectedTrack}Velocities`];
+                  const vels = composition[velocitiesKey];
                   const vel = vels ? vels[stepIdx] : 100;
                   valueRatio = vel / 127;
                   label = `${vel}`;
                 } else if (bottomLane === 'duration') {
-                  const durs = composition[`${selectedTrack}Durations`];
+                  const durs = composition[durationsKey];
                   const dur = durs ? durs[stepIdx] : 1;
                   valueRatio = dur / 8;
                   label = `${dur}s`;
                 } else {
-                  const probs = composition[`${selectedTrack}Probabilities`];
+                  const probs = composition[probabilitiesKey];
                   const prob = probs ? probs[stepIdx] : 100;
                   valueRatio = prob / 100;
                   label = `${prob}%`;
@@ -779,7 +784,7 @@ export function PianoRollPro({
                     }`}
                   >
                     <div
-                      className={`w-full max-w-[10px] rounded-t transition-all ${
+                      className={`w-full max-w-2.5 rounded-t transition-all ${
                         hasNote
                           ? `${trackThemeColor.lane} shadow-sm group-hover:brightness-125`
                           : 'bg-slate-700/40 group-hover:bg-slate-600'

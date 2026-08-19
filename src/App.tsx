@@ -125,9 +125,14 @@ export default function App() {
   }, [composition]);
 
   useEffect(() => {
-    document.title = `${PAGE_TITLES[activeTab]} | Kceva Music Generator Studio`;
+    const title = `${PAGE_TITLES[activeTab]} | Kceva Music Generator Studio`;
+    document.title = title;
     const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
     description?.setAttribute('content', PAGE_DESCRIPTIONS[activeTab]);
+    document.querySelector<HTMLMetaElement>('meta[property="og:title"]')?.setAttribute('content', title);
+    document.querySelector<HTMLMetaElement>('meta[property="og:description"]')?.setAttribute('content', PAGE_DESCRIPTIONS[activeTab]);
+    document.querySelector<HTMLMetaElement>('meta[name="twitter:title"]')?.setAttribute('content', title);
+    document.querySelector<HTMLMetaElement>('meta[name="twitter:description"]')?.setAttribute('content', PAGE_DESCRIPTIONS[activeTab]);
   }, [activeTab]);
 
   // ----- Track control handlers (Core + Custom Lines) -----
@@ -217,6 +222,7 @@ export default function App() {
       line.id === selectedVocalTrackId ? { ...line, sampleUrl, type: 'voice' as const } : line
     );
     handleUpdateComposition({ ...composition, customLines: updated });
+    setShowVocalPicker(false);
   }, [composition, selectedVocalTrackId]);
 
   const toggleSidebar = () => setIsSidebarCollapsed((prev) => !prev);
@@ -361,6 +367,7 @@ export default function App() {
     const wasPlaying = isPlaying;
     if (isPlaying) {
       audioDsp.stopSequencer();
+      audioDsp.stopTimelinePlayer();
       setIsPlaying(false);
     }
     setComposition(preset);
@@ -483,6 +490,7 @@ export default function App() {
   useEffect(() => {
     return () => {
       audioDsp.stopSequencer();
+      audioDsp.stopTimelinePlayer();
       audioDsp.stopCppDsp();
     };
   }, []);
@@ -715,6 +723,11 @@ export default function App() {
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         composition={composition}
+      />
+
+      <ShortcutsModal
+        isOpen={isShortcutsModalOpen}
+        onClose={() => setIsShortcutsModalOpen(false)}
       />
 
       {showTutorial && (

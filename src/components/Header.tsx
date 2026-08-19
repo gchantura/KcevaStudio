@@ -180,7 +180,7 @@ export function Header({
                 >
                   <Minus className="w-3 h-3" />
                 </button>
-                <span className="px-1.5 font-mono font-bold text-slate-200 text-xs min-w-[30px] text-center">
+                <span className="px-1.5 font-mono font-bold text-slate-200 text-xs min-w-7.5 text-center">
                   {composition.tempo}
                 </span>
                 <button
@@ -247,26 +247,29 @@ export function Header({
           <div className="flex items-center gap-1">
             <button
               onClick={onOpenNewModal}
-              className="px-2 py-1 text-slate-400 hover:text-slate-200 text-xs font-mono font-bold transition flex items-center gap-1 hover:bg-slate-800/60 rounded"
+              aria-label="New project"
+              title="New project"
+              className="p-1.5 text-slate-400 hover:text-slate-200 transition hover:bg-slate-800/60"
             >
               <PlusCircle className="w-3.5 h-3.5" />
-              NEW
             </button>
 
             <button
               onClick={onOpenSaveModal}
-              className="px-2 py-1 text-slate-400 hover:text-slate-200 text-xs font-mono font-bold transition flex items-center gap-1 hover:bg-slate-800/60 rounded"
+              aria-label="Save project"
+              title="Save project"
+              className="p-1.5 text-slate-400 hover:text-slate-200 transition hover:bg-slate-800/60"
             >
               <Save className="w-3.5 h-3.5" />
-              SAVE
             </button>
 
             <button
               onClick={onOpenExportModal}
-              className="px-2.5 py-1 bg-sky-600 hover:bg-sky-500 text-white text-xs font-mono font-bold transition flex items-center gap-1 rounded"
+              aria-label="Export audio"
+              title="Export audio"
+              className="p-1.5 text-slate-400 hover:text-slate-200 transition hover:bg-slate-800/60"
             >
               <Download className="w-3.5 h-3.5" />
-              EXPORT
             </button>
 
             {onOpenShortcutsModal && (

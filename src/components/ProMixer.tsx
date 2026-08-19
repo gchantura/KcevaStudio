@@ -163,8 +163,8 @@ export function ProMixer({ composition, isPlaying, onUpdateComposition }: ProMix
       mixerChannels: updatedChannels,
     });
 
-    if (updates.volume !== undefined) {
-      audioDsp.setChannelVolume(trackId, updates.volume);
+    if (updates.volume !== undefined || updates.isMuted !== undefined) {
+      audioDsp.setChannelVolume(trackId, updatedChannels[trackId].isMuted ? 0 : updatedChannels[trackId].volume);
     }
     if (updates.pan !== undefined) {
       audioDsp.setChannelPan(trackId, updates.pan);
