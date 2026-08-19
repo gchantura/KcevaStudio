@@ -104,6 +104,54 @@ textarea {
   font: inherit;
 }
 
+button[class],
+input[class],
+select[class],
+textarea[class] {
+  border-radius: var(--radius-sm);
+}
+
+button[class] {
+  min-height: var(--control-height);
+  line-height: 1.2;
+}
+
+input:not([type='range'])[class],
+select[class] {
+  min-height: var(--control-height);
+}
+
+button:not(:disabled)[class] {
+  cursor: pointer;
+}
+
+button:disabled[class],
+input:disabled[class],
+select:disabled[class],
+textarea:disabled[class] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+button[class]:focus-visible,
+input[class]:focus-visible,
+select[class]:focus-visible,
+textarea[class]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Keep utility-heavy legacy panels on one compact control rhythm. */
+.studio-control,
+.studio-icon-button {
+  min-height: var(--control-height);
+}
+
+.studio-icon-button {
+  width: var(--control-height);
+  padding: 0;
+}
+
 button,
 select,
 input[type='range'] {
