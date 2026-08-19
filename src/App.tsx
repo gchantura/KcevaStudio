@@ -68,6 +68,13 @@ const getInitialComposition = (): MusicComposition => {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed && parsed.melodySequence && parsed.drumPattern) {
+        const hasChordNotes = parsed.chordSequence?.some(
+          (chord: string | string[] | null) => chord !== null && chord !== 'REST'
+        );
+        if (!hasChordNotes && parsed.title === 'New Song') {
+          parsed.chordSequence = ['C3', null, null, null, 'G3', null, null, null, 'A3', null, null, null, 'F3', null, null, null];
+          parsed.scale = 'Major (Ionian)';
+        }
         return parsed;
       }
     }
@@ -173,6 +180,11 @@ export default function App() {
       handleUpdateComposition({
         ...composition,
         bassSynthPatch: { ...composition.bassSynthPatch, volume: value },
+      });
+    } else if (id === 'drums') {
+      handleUpdateComposition({
+        ...composition,
+        drumVolume: value,
       });
     } else {
       const updated = composition.customLines?.map((line) =>

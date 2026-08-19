@@ -84,7 +84,7 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
     if (id === 'melody') return composition.leadSynthPatch?.volume ?? 0.8;
     if (id === 'chords') return composition.chordSynthPatch?.volume ?? 0.7;
     if (id === 'bass') return composition.bassSynthPatch?.volume ?? 0.85;
-    if (id === 'drums') return 0.85;
+    if (id === 'drums') return composition.drumVolume ?? 0.85;
     const custom = composition.customLines?.find((l) => l.id === id);
     if (custom) return custom.volume ?? 0.8;
     return 0.8;
@@ -96,7 +96,8 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
     if (trackId === 'melody') {
       audioDsp.playSynthesizerNote(noteToFreq('C4'), composition.leadSynthPatch, 0.4);
     } else if (trackId === 'chords') {
-      const freqs = audioDsp.getChordFrequencies('I', composition.key, composition.scale);
+      const firstChord = composition.chordSequence.find((chord) => chord !== null && chord !== 'REST') || 'I';
+      const freqs = audioDsp.getChordFrequencies(firstChord, composition.key, composition.scale);
       audioDsp.playChordNotes(freqs, composition.chordSynthPatch, 0.6);
     } else if (trackId === 'bass') {
       audioDsp.playSynthesizerNote(noteToFreq('C2'), composition.bassSynthPatch, 0.4);

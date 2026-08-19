@@ -160,6 +160,7 @@ export interface MusicComposition {
   leadSynthPatch: SynthPatch;
   bassSynthPatch: SynthPatch;
   chordSynthPatch: SynthPatch;
+  drumVolume?: number;
   customLines?: CustomSoundLine[];
   mixerChannels?: Record<string, ChannelStripState>;
   arrangement?: SongArrangement;

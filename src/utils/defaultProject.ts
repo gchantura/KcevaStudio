@@ -20,11 +20,11 @@ export function defaultProject(): MusicComposition {
     genre: 'Pop',
     tempo: 120,
     key: 'C',
-    scale: 'major',
+    scale: 'Major (Ionian)',
     stepsCount: 16,
     melodySequence: Array(16).fill(null),
     bassSequence: Array(16).fill(null),
-    chordSequence: Array(16).fill(null),
+    chordSequence: ['C3', null, null, null, 'G3', null, null, null, 'A3', null, null, null, 'F3', null, null, null],
     drumPattern: {
       kick: [true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false],
       snare: [false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false],

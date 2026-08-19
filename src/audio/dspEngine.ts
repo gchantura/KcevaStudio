@@ -289,10 +289,15 @@ class DspEngine {
 
   public setChannelVolume(track: string, volume: number) {
     if (!this.audioCtx) this.init();
-    const g = this.trackGains[track];
-    if (g && this.audioCtx) {
-      g.gain.setTargetAtTime(Math.max(0, Math.min(1.5, volume)), this.audioCtx.currentTime, 0.02);
-    }
+    if (!this.audioCtx) return;
+    const normalizedVolume = Math.max(0, Math.min(1.5, volume));
+    const tracks = track === 'drums' ? ['drums', 'kick', 'snare', 'hihat', 'openHat', 'perc'] : [track];
+    tracks.forEach((trackId) => {
+      const gain = this.trackGains[trackId];
+      if (gain) {
+        gain.gain.setTargetAtTime(normalizedVolume, this.audioCtx!.currentTime, 0.02);
+      }
+    });
   }
 
   public setChannelPan(track: string, pan: number) {
@@ -1434,9 +1439,16 @@ public playSynthesizerNote(
   }
 
   private isTrackAudible(track: 'melody' | 'bass' | 'chords' | 'drums' | 'kick' | 'snare' | 'hihat' | 'openHat' | 'perc'): boolean {
+    const drumVoices = ['kick', 'snare', 'hihat', 'openHat', 'perc'];
+    if (track === 'drums' && drumVoices.some((voice) => this.trackSolos[voice])) {
+      return !this.trackMutes.drums;
+    }
+    if (drumVoices.includes(track)) {
+      if (!this.isTrackAudible('drums')) return false;
+    }
     const hasSolo = Object.values(this.trackSolos).some(Boolean);
     if (hasSolo) {
-      return !!this.trackSolos[track];
+      return !!this.trackSolos[track] || (drumVoices.includes(track) && !!this.trackSolos.drums);
     }
     return !this.trackMutes[track];
   }
