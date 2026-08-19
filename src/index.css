@@ -4,12 +4,128 @@
   grid-template-columns: repeat(16, minmax(0, 1fr));
 }
 
+:root {
+  color-scheme: light;
+  --color-bg: #f6f8fb;
+  --color-surface: #ffffff;
+  --color-surface-raised: #eef2f7;
+  --color-surface-inset: #e4e9f0;
+  --color-text: #18212f;
+  --color-muted: #5d697a;
+  --color-subtle: #7d8898;
+  --color-border: #d3dae4;
+  --color-divider: #e7ebf0;
+  --color-primary: #1677b8;
+  --color-primary-hover: #0f639b;
+  --color-secondary: #56657a;
+  --color-accent: #d97706;
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #c2413d;
+  --color-info: #2563eb;
+  --color-scrollbar: #9aa8b8;
+  --color-scrollbar-hover: #718196;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.08);
+  --shadow-md: 0 8px 24px rgb(15 23 42 / 0.12);
+  --control-height: 2rem;
+  --icon-size-sm: 0.875rem;
+  --icon-size-md: 1rem;
+  --transition-fast: 120ms ease;
+  --transition-normal: 180ms ease;
+  --focus-ring: 0 0 0 3px rgb(22 119 184 / 0.28);
+  --z-header: 40;
+  --z-modal: 50;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #0b111b;
+  --color-surface: #121a27;
+  --color-surface-raised: #1a2534;
+  --color-surface-inset: #080d15;
+  --color-text: #e7edf5;
+  --color-muted: #9aa8b8;
+  --color-subtle: #718196;
+  --color-border: #2c3a4d;
+  --color-divider: #202c3c;
+  --color-primary: #38a1dc;
+  --color-primary-hover: #63b9e8;
+  --color-secondary: #a9b7c8;
+  --color-accent: #f0a33a;
+  --color-success: #4ade80;
+  --color-warning: #f59e0b;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+  --color-scrollbar: #334155;
+  --color-scrollbar-hover: #4b6380;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.25);
+  --shadow-md: 0 8px 24px rgb(0 0 0 / 0.3);
+  --focus-ring: 0 0 0 3px rgb(56 161 220 / 0.32);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+select,
+input[type='range'] {
+  touch-action: manipulation;
+}
+
+:where(button, input, select, textarea, [tabindex]):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+::selection {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
 /* Quiet, compact scrollbars for the studio canvas and nested panels. */
 html,
 body,
 * {
   scrollbar-width: thin;
-  scrollbar-color: #334155 transparent;
+  scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 html::-webkit-scrollbar,
@@ -28,7 +144,7 @@ body::-webkit-scrollbar-track,
 html::-webkit-scrollbar-thumb,
 body::-webkit-scrollbar-thumb,
 *::-webkit-scrollbar-thumb {
-  background: #263449;
+  background: var(--color-scrollbar);
   border: 2px solid transparent;
   background-clip: padding-box;
   border-radius: 999px;
@@ -37,7 +153,7 @@ body::-webkit-scrollbar-thumb,
 html::-webkit-scrollbar-thumb:hover,
 body::-webkit-scrollbar-thumb:hover,
 *::-webkit-scrollbar-thumb:hover {
-  background: #4b6380;
+  background: var(--color-scrollbar-hover);
   border-width: 1px;
 }
 
@@ -49,10 +165,21 @@ body::-webkit-scrollbar-corner,
 
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: #334155 transparent;
+  scrollbar-color: var(--color-scrollbar) transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
   width: 7px;
   height: 7px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

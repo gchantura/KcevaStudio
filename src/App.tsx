@@ -31,6 +31,7 @@ import { QuickActionsToolbar } from './components/QuickActionsToolbar';
 import { TutorialOverlay } from './components/TutorialOverlay';
 
 const AUTOSAVE_STORAGE_KEY = 'kceva_music_studio_autosave_v1';
+const THEME_STORAGE_KEY = 'kceva_music_studio_theme';
 
 const PAGE_TITLES: Record<ViewTab, string> = {
   timeline: 'Timeline Arranger',
@@ -85,6 +86,11 @@ const getInitialComposition = (): MusicComposition => {
 };
 
 export default function App() {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
   const [composition, setComposition] = useState<MusicComposition>(getInitialComposition);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -108,6 +114,11 @@ export default function App() {
   const [trackMutes, setTrackMutes] = useState<Record<string, boolean>>({});
   const [trackSolos, setTrackSolos] = useState<Record<string, boolean>>({});
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
 
   // Autosave listener with debounce
   useEffect(() => {
@@ -546,6 +557,8 @@ export default function App() {
           onOpenSaveModal={() => setIsSaveModalOpen(true)}
           onOpenExportModal={() => setIsExportModalOpen(true)}
           onOpenShortcutsModal={() => setIsShortcutsModalOpen(true)}
+          theme={theme}
+          onToggleTheme={() => setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'))}
         />
 
         {/* Main Studio Viewport */}

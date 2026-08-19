@@ -25,6 +25,8 @@ import {
   PanelLeftClose,
   PanelLeft,
   CheckCircle2,
+  Moon,
+  Sun,
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -44,6 +46,8 @@ interface HeaderProps {
   onOpenSaveModal: () => void;
   onOpenExportModal: () => void;
   onOpenShortcutsModal?: () => void;
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
 }
 
 export function Header({
@@ -62,6 +66,8 @@ export function Header({
   onOpenSaveModal,
   onOpenExportModal,
   onOpenShortcutsModal,
+  theme,
+  onToggleTheme,
 }: HeaderProps) {
   const [masterVol, setMasterVol] = useState(0.8);
   const [isMuted, setIsMuted] = useState(false);
@@ -245,6 +251,14 @@ export function Header({
 
           {/* Right: Actions */}
           <div className="flex items-center gap-1">
+            <button
+              onClick={onToggleTheme}
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+              title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+              className="p-1.5 text-slate-400 hover:text-slate-200 transition hover:bg-slate-800/60"
+            >
+              {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            </button>
             <button
               onClick={onOpenNewModal}
               aria-label="New project"
