@@ -35,10 +35,15 @@ export const VocalPickerModal: React.FC<VocalPickerModalProps> = ({ isOpen, onCl
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-slate-900 rounded-xl p-6 w-96 shadow-2xl border border-slate-800">
+    <div className="studio-modal-backdrop fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
+      <div
+        className="studio-modal rounded-xl p-6 w-96 shadow-2xl border"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="vocal-picker-modal-title"
+      >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-white">Choose a Vocal Sample</h2>
+          <h2 id="vocal-picker-modal-title" className="text-lg font-bold">Choose a Vocal Sample</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-200">
             <X className="w-5 h-5" />
           </button>
@@ -48,14 +53,14 @@ export const VocalPickerModal: React.FC<VocalPickerModalProps> = ({ isOpen, onCl
             <button
               key={url}
               onClick={() => setSelected(url)}
-              className={`w-full text-left px-3 py-2 rounded ${selected === url ? 'bg-sky-600/30 text-sky-200' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'} `}
+              className={`w-full text-left px-3 py-2 rounded ${selected === url ? 'bg-sky-600/30 text-sky-200' : 'studio-inset text-slate-300 hover:bg-slate-700'} `}
             >
               {url.split('/').pop()}
             </button>
           ))}
         </div>
         {/* Placeholder for live mic recording */}
-        <div className="flex items-center gap-2 p-2 border border-slate-700 rounded bg-slate-800">
+        <div className="studio-inset flex items-center gap-2 p-2 border rounded">
           <Mic className="w-5 h-5 text-sky-400" />
           <span className="text-slate-400 text-sm">Record from microphone (future)</span>
         </div>

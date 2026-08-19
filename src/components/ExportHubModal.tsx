@@ -178,8 +178,13 @@ public:
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded p-4 sm:p-5 max-w-2xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+    <div className="studio-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
+      <div
+        className="studio-modal border rounded p-4 sm:p-5 max-w-2xl w-full shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="export-modal-title"
+      >
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-3 border-b border-slate-800">
           <div className="flex items-center gap-2.5">
@@ -187,7 +192,7 @@ public:
               <Download className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-slate-100 flex items-center gap-1.5">
+              <h2 id="export-modal-title" className="text-sm font-bold flex items-center gap-1.5">
                 <span>Audio & Project Export Center</span>
                 <span className="text-[9px] font-mono px-1 py-0.2 bg-sky-950 text-sky-400 border border-sky-800 rounded">
                   KCEVA

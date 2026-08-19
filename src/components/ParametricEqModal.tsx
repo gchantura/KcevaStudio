@@ -123,8 +123,13 @@ export function ParametricEqModal({
   const fillD = `${pathD} L ${svgW} ${svgH / 2} L 0 ${svgH / 2} Z`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-3xl p-6 shadow-2xl space-y-5 my-8">
+    <div className="studio-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-150 overflow-y-auto">
+      <div
+        className="studio-modal border rounded-2xl w-full max-w-3xl p-6 shadow-2xl space-y-5 my-8"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="eq-modal-title"
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2.5">
@@ -132,7 +137,7 @@ export function ParametricEqModal({
               <Sliders className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-100">{title}</h2>
+              <h2 id="eq-modal-title" className="text-base font-bold">{title}</h2>
               <p className="text-xs text-slate-400">
                 Parametric 4-band equalizer with real-time transfer function visualization
               </p>
@@ -156,7 +161,7 @@ export function ParametricEqModal({
         </div>
 
         {/* Live SVG Graph */}
-        <div className="bg-slate-950 rounded-xl p-4 border border-slate-800 relative">
+        <div className="studio-inset rounded-xl p-4 border relative">
           <div className="h-44 w-full relative">
             <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full overflow-visible">
               {/* Frequency grid lines (100Hz, 1kHz, 10kHz) */}
@@ -218,7 +223,7 @@ export function ParametricEqModal({
         </div>
 
         {/* Selected Band Controls */}
-        <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800 space-y-4">
+        <div className="studio-panel p-4 rounded-xl border space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full" style={{ backgroundColor: selectedBand.color }} />

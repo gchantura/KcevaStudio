@@ -53,17 +53,20 @@ export const ShortcutsModal: React.FC<ShortcutsModalProps> = ({ isOpen, onClose 
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
+      className="studio-modal-backdrop fixed inset-0 z-50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-slate-950 border border-slate-800 rounded-lg max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+        className="studio-modal border rounded-lg max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="shortcuts-modal-title"
       >
         {/* Header */}
-        <div className="p-3.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+        <div className="studio-toolbar p-3.5 border-b flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Keyboard className="w-5 h-5 text-sky-400" />
-            <h2 className="text-sm font-bold text-slate-100 uppercase tracking-wider">
+            <h2 id="shortcuts-modal-title" className="text-sm font-bold uppercase tracking-wider">
               Studio Keyboard Shortcuts Cheatsheet
             </h2>
           </div>
@@ -80,7 +83,7 @@ export const ShortcutsModal: React.FC<ShortcutsModalProps> = ({ isOpen, onClose 
           {SHORTCUT_GROUPS.map((group, idx) => {
             const Icon = group.icon;
             return (
-              <div key={idx} className="bg-slate-900/60 border border-slate-800/80 rounded p-3 space-y-2">
+              <div key={idx} className="studio-panel border rounded p-3 space-y-2">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide">
                   <Icon className={`w-4 h-4 ${group.color}`} />
                   <span className="text-slate-200">{group.title}</span>
@@ -90,7 +93,7 @@ export const ShortcutsModal: React.FC<ShortcutsModalProps> = ({ isOpen, onClose 
                   {group.items.map((item, iIdx) => (
                     <div
                       key={iIdx}
-                      className="flex items-center justify-between p-1.5 bg-slate-950/80 border border-slate-800 rounded"
+                      className="studio-inset flex items-center justify-between p-1.5 border rounded"
                     >
                       <span className="px-1.5 py-0.5 bg-slate-800 text-sky-300 font-bold rounded text-[11px] border border-slate-700 shadow-xs">
                         {item.key}
@@ -105,7 +108,7 @@ export const ShortcutsModal: React.FC<ShortcutsModalProps> = ({ isOpen, onClose 
         </div>
 
         {/* Footer */}
-        <div className="p-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400">
+        <div className="studio-toolbar p-3 border-t flex items-center justify-between text-xs font-mono text-slate-400">
           <span>Tip: Press <kbd className="px-1 py-0.5 bg-slate-800 rounded text-sky-400 font-bold">?</kbd> anywhere to open/close</span>
           <button
             onClick={onClose}
