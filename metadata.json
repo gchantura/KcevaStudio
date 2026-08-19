@@ -1,0 +1,6 @@
+{
+  "name": "Music Generator Studio",
+  "description": "Algorithmic and C++ DSP music generator with real-time multi-track synthesis, piano roll sequencer, sound design FX, and audio export.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": []
+}
