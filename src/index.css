@@ -120,6 +120,77 @@ input[type='range'] {
   color: #ffffff;
 }
 
+.studio-header {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.studio-toolbar {
+  background: var(--color-surface-raised);
+  border-color: var(--color-border);
+}
+
+.studio-divider {
+  border-color: var(--color-divider);
+}
+
+.studio-label {
+  color: var(--color-subtle);
+}
+
+.studio-value {
+  color: var(--color-text);
+}
+
+.studio-input {
+  background: var(--color-surface-inset);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.studio-segment[data-active='true'] {
+  background: var(--color-secondary);
+  color: #ffffff;
+}
+
+.studio-range {
+  accent-color: var(--color-primary);
+}
+
+.studio-control {
+  color: var(--color-muted);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.studio-control:hover {
+  color: var(--color-text);
+  background: var(--color-surface-inset);
+}
+
+.studio-icon-button {
+  min-width: var(--control-height);
+  min-height: var(--control-height);
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+}
+
+.studio-tab {
+  color: var(--color-muted);
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.studio-tab:hover {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+}
+
+.studio-tab[data-active='true'] {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+  border-bottom-color: var(--color-primary);
+}
+
 /* Quiet, compact scrollbars for the studio canvas and nested panels. */
 html,
 body,

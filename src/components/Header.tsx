@@ -132,7 +132,7 @@ export function Header({
   ];
 
   return (
-    <header className="bg-slate-950 border-b border-slate-800/80 sticky top-0 z-40">
+    <header className="studio-header border-b sticky top-0 z-40">
       <div className="px-3 py-1.5 space-y-1.5 w-full">
         {/* Top bar */}
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -142,18 +142,18 @@ export function Header({
               <button
                 onClick={onToggleSidebar}
                 title={isSidebarCollapsed ? 'Show Tracks' : 'Hide Tracks'}
-                className="p-1 rounded text-slate-400 hover:text-slate-200 transition"
+                className="studio-control studio-icon-button"
               >
                 {isSidebarCollapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
               </button>
             )}
             <div className="flex items-center gap-1.5">
-              <Disc3 className={`w-4 h-4 text-slate-400 ${isPlaying ? 'animate-spin' : ''}`} />
-              <span className="text-sm font-black tracking-tight text-slate-200">
-                Kceva <span className="text-slate-500 font-medium text-xs">Studio</span>
+              <Disc3 className={`w-4 h-4 studio-label ${isPlaying ? 'animate-spin' : ''}`} />
+              <span className="text-sm font-black tracking-tight studio-value">
+                Kceva <span className="studio-label font-medium text-xs">Studio</span>
               </span>
               {isAutosaving && (
-                <span className="flex items-center gap-0.5 text-[9px] font-mono text-slate-500">
+                <span className="studio-label flex items-center gap-0.5 text-[9px] font-mono">
                   <CheckCircle2 className="w-2.5 h-2.5" />
                   saved
                 </span>
@@ -162,14 +162,14 @@ export function Header({
           </div>
 
           {/* Center: Transport + Controls */}
-          <div className="flex items-center gap-2 bg-slate-900/60 px-2 py-1 border border-slate-800/60 rounded">
+          <div className="studio-toolbar flex items-center gap-2 px-2 py-1 border rounded">
             {/* Play */}
             <button
               onClick={onTogglePlay}
               className={`px-4 py-1.5 font-bold text-xs font-mono flex items-center gap-1.5 rounded transition active:scale-95 ${
                 isPlaying
-                  ? 'bg-slate-700 hover:bg-slate-600 text-white'
-                  : 'bg-sky-600 hover:bg-sky-500 text-white'
+                  ? 'bg-[var(--color-secondary)] hover:bg-[var(--color-muted)] text-white'
+                  : 'bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white'
               }`}
             >
               {isPlaying ? <Square className="w-3 h-3 fill-current" /> : <Play className="w-3 h-3 fill-current" />}
@@ -177,21 +177,21 @@ export function Header({
             </button>
 
             {/* BPM */}
-            <div className="flex items-center gap-1 pl-2 border-l border-slate-800/60">
-              <span className="text-[10px] font-mono text-slate-500">BPM</span>
-              <div className="flex items-center bg-slate-950 border border-slate-800 rounded">
+            <div className="studio-divider flex items-center gap-1 pl-2 border-l">
+              <span className="studio-label text-[10px] font-mono">BPM</span>
+              <div className="studio-input flex items-center border rounded">
                 <button
                   onClick={() => handleTempoChange(composition.tempo - 2)}
-                  className="px-1.5 py-1 text-slate-500 hover:text-slate-200 text-xs"
+                  className="studio-control px-1.5 py-1 text-xs"
                 >
                   <Minus className="w-3 h-3" />
                 </button>
-                <span className="px-1.5 font-mono font-bold text-slate-200 text-xs min-w-7.5 text-center">
+                <span className="studio-value px-1.5 font-mono font-bold text-xs min-w-7.5 text-center">
                   {composition.tempo}
                 </span>
                 <button
                   onClick={() => handleTempoChange(composition.tempo + 2)}
-                  className="px-1.5 py-1 text-slate-500 hover:text-slate-200 text-xs"
+                  className="studio-control px-1.5 py-1 text-xs"
                 >
                   <Plus className="w-3 h-3" />
                 </button>
@@ -199,16 +199,15 @@ export function Header({
             </div>
 
             {/* Key — fixed with proper option color */}
-            <div className="hidden sm:flex items-center gap-1 pl-2 border-l border-slate-800/60">
-              <span className="text-[10px] font-mono text-slate-500">KEY</span>
+            <div className="studio-divider hidden sm:flex items-center gap-1 pl-2 border-l">
+              <span className="studio-label text-[10px] font-mono">KEY</span>
               <select
                 value={composition.key}
                 onChange={(e) => handleKeyChange(e.target.value)}
-                className="bg-slate-950 border border-slate-800 rounded px-1.5 py-1 text-xs font-mono font-bold text-slate-200 focus:outline-none focus:border-sky-600 cursor-pointer"
-                style={{ colorScheme: 'dark' }}
+                className="studio-input border rounded px-1.5 py-1 text-xs font-mono font-bold cursor-pointer"
               >
                 {NOTE_NAMES.map((k) => (
-                  <option key={k} value={k} className="bg-slate-900 text-slate-200">
+                  <option key={k} value={k}>
                     {k}
                   </option>
                 ))}
@@ -216,15 +215,16 @@ export function Header({
             </div>
 
             {/* Steps */}
-            <div className="hidden md:flex items-center gap-0.5 pl-2 border-l border-slate-800/60">
+            <div className="studio-divider hidden md:flex items-center gap-0.5 pl-2 border-l">
               {[16, 32, 64, 128].map((steps) => (
                 <button
                   key={steps}
                   onClick={() => handleStepsCountChange(steps)}
+                  data-active={composition.stepsCount === steps}
                   className={`px-1.5 py-0.5 text-[10px] font-mono font-bold rounded transition ${
                     composition.stepsCount === steps
-                      ? 'bg-slate-700 text-white'
-                      : 'text-slate-500 hover:text-slate-300'
+                      ? 'studio-segment'
+                      : 'studio-control'
                   }`}
                 >
                   {steps}
@@ -233,8 +233,8 @@ export function Header({
             </div>
 
             {/* Volume */}
-            <div className="flex items-center gap-1 pl-2 border-l border-slate-800/60">
-              <button onClick={toggleMute} className="text-slate-500 hover:text-slate-200">
+            <div className="studio-divider flex items-center gap-1 pl-2 border-l">
+              <button onClick={toggleMute} className="studio-control">
                 {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
               </button>
               <input
@@ -244,18 +244,18 @@ export function Header({
                 step="0.05"
                 value={isMuted ? 0 : masterVol}
                 onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-                className="w-14 h-1 bg-slate-800 accent-slate-400 cursor-pointer"
+                className="studio-range w-14 h-1 cursor-pointer"
               />
             </div>
           </div>
 
           {/* Right: Actions */}
           <div className="flex items-center gap-1">
-            <button
+              <button
               onClick={onToggleTheme}
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
               title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-              className="p-1.5 text-slate-400 hover:text-slate-200 transition hover:bg-slate-800/60"
+              className="studio-control studio-icon-button"
             >
               {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
             </button>
@@ -263,7 +263,7 @@ export function Header({
               onClick={onOpenNewModal}
               aria-label="New project"
               title="New project"
-              className="p-1.5 text-slate-400 hover:text-slate-200 transition hover:bg-slate-800/60"
+              className="studio-control studio-icon-button"
             >
               <PlusCircle className="w-3.5 h-3.5" />
             </button>
@@ -272,7 +272,7 @@ export function Header({
               onClick={onOpenSaveModal}
               aria-label="Save project"
               title="Save project"
-              className="p-1.5 text-slate-400 hover:text-slate-200 transition hover:bg-slate-800/60"
+              className="studio-control studio-icon-button"
             >
               <Save className="w-3.5 h-3.5" />
             </button>
@@ -281,7 +281,7 @@ export function Header({
               onClick={onOpenExportModal}
               aria-label="Export audio"
               title="Export audio"
-              className="p-1.5 text-slate-400 hover:text-slate-200 transition hover:bg-slate-800/60"
+              className="studio-control studio-icon-button"
             >
               <Download className="w-3.5 h-3.5" />
             </button>
@@ -289,7 +289,7 @@ export function Header({
             {onOpenShortcutsModal && (
               <button
                 onClick={onOpenShortcutsModal}
-                className="px-2 py-1 text-slate-500 hover:text-slate-200 text-xs font-mono transition flex items-center gap-1 hover:bg-slate-800/60 rounded"
+                className="studio-control px-2 py-1 text-xs font-mono transition flex items-center gap-1 rounded"
                 title="Keyboard Shortcuts (?)"
               >
                 <Keyboard className="w-3.5 h-3.5" />
@@ -298,7 +298,7 @@ export function Header({
 
             <button
               onClick={onOpenClearModal}
-              className="p-1 text-slate-500 hover:text-red-400 transition rounded hover:bg-slate-800/60"
+              className="studio-control studio-icon-button hover:text-[var(--color-danger)]"
               title="Clear / Reset"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -315,13 +315,10 @@ export function Header({
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id as ViewTab)}
-                className={`flex items-center gap-1.5 px-3 py-1 text-xs font-bold transition whitespace-nowrap rounded-sm ${
-                  isActive
-                    ? 'bg-slate-800 text-white border-b-2 border-sky-500'
-                    : 'text-slate-500 hover:text-slate-300 hover:bg-slate-900'
-                }`}
+                data-active={isActive}
+                className="studio-tab flex items-center gap-1.5 px-3 py-1 text-xs font-bold transition whitespace-nowrap rounded-sm border-b-2 border-transparent"
               >
-                <IconComp className={`w-3.5 h-3.5 ${isActive ? 'text-sky-400' : 'text-slate-600'}`} />
+                <IconComp className="w-3.5 h-3.5" />
                 {tab.label}
               </button>
             );
