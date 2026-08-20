@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MusicComposition, CustomSoundLine } from '../types';
 import { audioDsp } from '../audio/dspEngine';
 import { noteToFreq } from '../audio/musicTheory';
@@ -11,6 +11,7 @@ import {
   Volume2,
   VolumeX,
   Play,
+  Square,
   Music,
   Sparkles,
   Radio,
@@ -52,6 +53,8 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
   onClearTrack,
 }) => {
   const [isDrumsExpanded, setIsDrumsExpanded] = useState(true);
+  const [previewingTrack, setPreviewingTrack] = useState<string | null>(null);
+  const previewTimerRef = useRef<number | null>(null);
 
   // Helper counts
   const melodyActiveNotes = composition.melodySequence.filter((n) => n && n !== 'REST').length;
@@ -90,25 +93,50 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
     return 0.8;
   };
 
+  const stopTrackPreview = () => {
+    if (previewTimerRef.current !== null) window.clearInterval(previewTimerRef.current);
+    previewTimerRef.current = null;
+    setPreviewingTrack(null);
+  };
+
+  useEffect(() => stopTrackPreview, []);
+
+  const playPreviewStep = (trackId: string, step: number) => {
+    if (trackId === 'melody') {
+      const note = composition.melodySequence[step];
+      if (note && note !== 'REST') audioDsp.playSynthesizerNote(noteToFreq(note), composition.leadSynthPatch, 0.22);
+    } else if (trackId === 'bass') {
+      const note = composition.bassSequence[step];
+      if (note && note !== 'REST') audioDsp.playSynthesizerNote(noteToFreq(note), composition.bassSynthPatch, 0.22);
+    } else if (trackId === 'chords') {
+      const chord = composition.chordSequence[step];
+      if (chord && chord !== 'REST') {
+        const chordName = Array.isArray(chord) ? chord[0] : chord;
+        audioDsp.playChordNotes(audioDsp.getChordFrequencies(chordName, composition.key, composition.scale), composition.chordSynthPatch, 0.35);
+      }
+    } else if (trackId === 'drums') {
+      (['kick', 'snare', 'hihat', 'openHat', 'perc'] as const).forEach((drumType) => {
+        if (composition.drumPattern[drumType][step]) audioDsp.playDrumSound(drumType);
+      });
+    } else {
+      const custom = composition.customLines?.find((line) => line.id === trackId);
+      const note = custom?.sequence[step];
+      if (custom && note && note !== 'REST') audioDsp.playSynthesizerNote(noteToFreq(note), custom.patch, 0.22);
+    }
+  };
+
   const auditionTrackSound = (trackId: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    if (previewingTrack === trackId) return stopTrackPreview();
+    stopTrackPreview();
     audioDsp.resumeContext();
-    if (trackId === 'melody') {
-      audioDsp.playSynthesizerNote(noteToFreq('C4'), composition.leadSynthPatch, 0.4);
-    } else if (trackId === 'chords') {
-      const firstChord = composition.chordSequence.find((chord) => chord !== null && chord !== 'REST') || 'I';
-      const freqs = audioDsp.getChordFrequencies(firstChord, composition.key, composition.scale);
-      audioDsp.playChordNotes(freqs, composition.chordSynthPatch, 0.6);
-    } else if (trackId === 'bass') {
-      audioDsp.playSynthesizerNote(noteToFreq('C2'), composition.bassSynthPatch, 0.4);
-    } else if (trackId === 'drums' || trackId === 'kick') {
-      audioDsp.playDrumSound('kick');
-    } else {
-      const custom = composition.customLines?.find((l) => l.id === trackId);
-      if (custom) {
-        audioDsp.playSynthesizerNote(noteToFreq('C4'), custom.patch, 0.4);
-      }
-    }
+    setPreviewingTrack(trackId);
+    let step = 0;
+    playPreviewStep(trackId, step);
+    previewTimerRef.current = window.setInterval(() => {
+      step = (step + 1) % composition.stepsCount;
+      playPreviewStep(trackId, step);
+    }, 60000 / ((composition.tempo || 120) * 4));
   };
 
   const auditionDrumSound = (drumType: 'kick' | 'snare' | 'hihat' | 'openHat' | 'perc', e: React.MouseEvent) => {
@@ -120,15 +148,15 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
   return (
     <aside className="studio-sidebar w-64 border-r flex flex-col shrink-0 select-none h-screen sticky top-0 overflow-hidden font-sans shadow-2xl">
       {/* Sidebar Header with Quick Add Actions */}
-      <div className="studio-toolbar px-3.5 py-2.5 border-b flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
+      <div className="studio-toolbar studio-sidebar-header px-3.5 py-2.5 border-b">
+        <div className="flex items-center gap-1.5 text-left">
           <Sliders className="w-3.5 h-3.5 text-sky-400" />
           <div>
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-200">Track Stems</h2>
             <p className="text-[9px] text-slate-500 font-mono">{totalTracks} studio tracks</p>
           </div>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="studio-sidebar-actions">
           <button
             onClick={onAddTrack}
             title="Add New Synth Track"
@@ -159,53 +187,55 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
               : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-900 hover:border-slate-700'
           }`}
         >
-          <div className="flex items-center justify-between mb-1.5">
-            <div className="flex items-center gap-1.5">
+          <div className="flex items-center justify-between gap-2 mb-1.5">
+            <div className="min-w-0 flex items-center gap-1.5">
               <button
                 onClick={(e) => auditionTrackSound('melody', e)}
                 title="Audition Lead Melody Sound"
                 className="w-5 h-5 rounded bg-sky-500/20 hover:bg-sky-500 text-sky-300 hover:text-slate-950 flex items-center justify-center transition"
               >
-                <Play className="w-2.5 h-2.5 fill-current" />
+                {previewingTrack === 'melody' ? <Square className="w-2.5 h-2.5 fill-current" /> : <Play className="w-2.5 h-2.5 fill-current" />}
               </button>
-              <div>
+              <div className="min-w-0 text-left">
                 <span className="text-xs font-bold text-slate-100 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-sky-400 shrink-0" />
-                  1. Lead Synth
+                  1. Lead
                 </span>
                 <span className="text-[9px] font-mono text-sky-400/80 block">
-                  {composition.leadSynthPatch?.waveType || 'sawtooth'} • {melodyActiveNotes} notes
+                  {composition.leadSynthPatch?.waveType || 'saw'} • {melodyActiveNotes}
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="shrink-0 flex items-center gap-1">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onToggleMute('melody');
                 }}
-                title="Mute Track"
+                aria-label="Mute Lead Synth"
+                title="Mute Lead Synth"
                 className={`w-5 h-5 rounded text-[10px] font-mono font-bold transition ${
                   getTrackMuteState('melody')
                     ? 'bg-rose-600 text-white shadow-sm'
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                M
+                {getTrackMuteState('melody') ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onToggleSolo('melody');
                 }}
-                title="Solo Track"
+                aria-label="Solo Lead Synth"
+                title="Solo Lead Synth"
                 className={`w-5 h-5 rounded text-[10px] font-mono font-bold transition ${
                   getTrackSoloState('melody')
                     ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                S
+                <Headphones className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
@@ -234,22 +264,22 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
               : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-900 hover:border-slate-700'
           }`}
         >
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="studio-track-header flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-1.5">
               <button
                 onClick={(e) => auditionTrackSound('chords', e)}
                 title="Audition Chords & Pad Sound"
                 className="w-5 h-5 rounded bg-purple-500/20 hover:bg-purple-500 text-purple-300 hover:text-slate-950 flex items-center justify-center transition"
               >
-                <Play className="w-2.5 h-2.5 fill-current" />
+                {previewingTrack === 'chords' ? <Square className="w-2.5 h-2.5 fill-current" /> : <Play className="w-2.5 h-2.5 fill-current" />}
               </button>
               <div>
                 <span className="text-xs font-bold text-slate-100 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-purple-400 shrink-0" />
-                  2. Chords & Pad
+                  2. Chords
                 </span>
                 <span className="text-[9px] font-mono text-purple-400/80 block">
-                  Poly Harmony • {chordActiveNotes} chords
+                  {chordActiveNotes} chords
                 </span>
               </div>
             </div>
@@ -259,28 +289,30 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
                   e.stopPropagation();
                   onToggleMute('chords');
                 }}
-                title="Mute Track"
+                aria-label="Mute Chords and Pad"
+                title="Mute Chords and Pad"
                 className={`w-5 h-5 rounded text-[10px] font-mono font-bold transition ${
                   getTrackMuteState('chords')
                     ? 'bg-rose-600 text-white shadow-sm'
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                M
+                {getTrackMuteState('chords') ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onToggleSolo('chords');
                 }}
-                title="Solo Track"
+                aria-label="Solo Chords and Pad"
+                title="Solo Chords and Pad"
                 className={`w-5 h-5 rounded text-[10px] font-mono font-bold transition ${
                   getTrackSoloState('chords')
                     ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                S
+                <Headphones className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
@@ -309,22 +341,22 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
               : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-900 hover:border-slate-700'
           }`}
         >
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="studio-track-header flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-1.5">
               <button
                 onClick={(e) => auditionTrackSound('bass', e)}
                 title="Audition Bass / 808 Sound"
                 className="w-5 h-5 rounded bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 flex items-center justify-center transition"
               >
-                <Play className="w-2.5 h-2.5 fill-current" />
+                {previewingTrack === 'bass' ? <Square className="w-2.5 h-2.5 fill-current" /> : <Play className="w-2.5 h-2.5 fill-current" />}
               </button>
               <div>
                 <span className="text-xs font-bold text-slate-100 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
-                  3. Bass & 808
+                  3. Bass
                 </span>
                 <span className="text-[9px] font-mono text-emerald-400/80 block">
-                  Low Sub-End • {bassActiveNotes} notes
+                  sub • {bassActiveNotes}
                 </span>
               </div>
             </div>
@@ -334,28 +366,30 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
                   e.stopPropagation();
                   onToggleMute('bass');
                 }}
-                title="Mute Track"
+                aria-label="Mute Bass and 808"
+                title="Mute Bass and 808"
                 className={`w-5 h-5 rounded text-[10px] font-mono font-bold transition ${
                   getTrackMuteState('bass')
                     ? 'bg-rose-600 text-white shadow-sm'
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                M
+                {getTrackMuteState('bass') ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onToggleSolo('bass');
                 }}
-                title="Solo Track"
+                aria-label="Solo Bass and 808"
+                title="Solo Bass and 808"
                 className={`w-5 h-5 rounded text-[10px] font-mono font-bold transition ${
                   getTrackSoloState('bass')
                     ? 'bg-amber-500 text-slate-950 font-black shadow-sm'
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                S
+                <Headphones className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
@@ -384,7 +418,7 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
               : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-900 hover:border-slate-700'
           }`}
         >
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="studio-track-header flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-1.5">
               <button
                 onClick={(e) => {
@@ -399,10 +433,10 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
               <div>
                 <span className="text-xs font-bold text-slate-100 flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
-                  4. Drum Kit (5 Voices)
+                  4. Drums
                 </span>
                 <span className="text-[9px] font-mono text-amber-400/80 block">
-                  808 Groove • {drumActiveSteps} hits
+                  {drumActiveSteps} hits
                 </span>
               </div>
             </div>
@@ -412,6 +446,7 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
                   e.stopPropagation();
                   onToggleMute('drums');
                 }}
+                aria-label="Mute Drums"
                 title="Mute Drums"
                 className={`w-5 h-5 rounded text-[10px] font-mono font-bold transition ${
                   getTrackMuteState('drums')
@@ -419,13 +454,14 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                M
+                {getTrackMuteState('drums') ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onToggleSolo('drums');
                 }}
+                aria-label="Solo Drums"
                 title="Solo Drums"
                 className={`w-5 h-5 rounded text-[10px] font-mono font-bold transition ${
                   getTrackSoloState('drums')
@@ -433,7 +469,7 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                S
+                <Headphones className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
@@ -457,11 +493,11 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
           {isDrumsExpanded && (
             <div className="mt-2 pt-2 border-t border-slate-800/80 space-y-1 pl-1">
               {[
-                { id: 'kick', name: 'Kick Drum' },
-                { id: 'snare', name: 'Snare Snap' },
-                { id: 'hihat', name: 'Closed HiHat' },
-                { id: 'openHat', name: 'Open HiHat' },
-                { id: 'perc', name: 'Percussion' },
+                { id: 'kick', name: 'Kick' },
+                { id: 'snare', name: 'Snare' },
+                { id: 'hihat', name: 'Hat' },
+                { id: 'openHat', name: 'Open Hat' },
+                { id: 'perc', name: 'Perc' },
               ].map((d) => (
                 <div key={d.id} className="flex items-center justify-between text-[11px] py-1 px-1.5 rounded bg-slate-950/60 border border-slate-800/60">
                   <div className="flex items-center gap-1.5">
@@ -479,11 +515,13 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
                       e.stopPropagation();
                       onToggleMute(d.id);
                     }}
-                    className={`px-1.5 py-0.5 text-[9px] font-mono rounded font-bold transition ${
+                    className={`w-6 h-6 p-0 flex items-center justify-center rounded font-bold transition ${
                       getTrackMuteState(d.id) ? 'bg-rose-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                     }`}
+                      aria-label={`${getTrackMuteState(d.id) ? 'Unmute' : 'Mute'} ${d.name}`}
+                      title={`${getTrackMuteState(d.id) ? 'Unmute' : 'Mute'} ${d.name}`}
                   >
-                    {getTrackMuteState(d.id) ? 'MUTED' : 'MUTE'}
+                      {getTrackMuteState(d.id) ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               ))}
@@ -508,14 +546,14 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
                     : 'bg-slate-900/60 border-slate-800/90 hover:bg-slate-900 hover:border-slate-700'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="studio-track-header flex items-center justify-between gap-2 mb-1.5">
                   <div className="flex items-center gap-1.5 truncate">
                     <button
                       onClick={(e) => auditionTrackSound(line.id, e)}
                       title={`Audition ${line.name}`}
                       className="w-5 h-5 rounded bg-pink-500/20 hover:bg-pink-500 text-pink-300 hover:text-slate-950 flex items-center justify-center transition shrink-0"
                     >
-                      <Play className="w-2.5 h-2.5 fill-current" />
+                      {previewingTrack === line.id ? <Square className="w-2.5 h-2.5 fill-current" /> : <Play className="w-2.5 h-2.5 fill-current" />}
                     </button>
                     <div className="truncate">
                       <span className="text-xs font-bold text-slate-100 truncate block">
@@ -548,7 +586,7 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
                         line.isMuted ? 'bg-rose-600 text-white shadow-sm' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      M
+                        {line.isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
                     </button>
                     <button
                       onClick={(e) => {
@@ -559,7 +597,7 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
                         line.isSoloed ? 'bg-amber-500 text-slate-950 font-black shadow-sm' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                       }`}
                     >
-                      S
+                        <Headphones className="w-3.5 h-3.5" />
                     </button>
                     {onDeleteCustomLine && (
                       <button

@@ -12,6 +12,27 @@ interface PianoKeyboardProps {
   onRecordStep?: (note: string) => void;
 }
 
+export function isRootNote(note: string, rootKey: string): boolean {
+  if (!note || !rootKey) return false;
+  const notePitchClass = note.replace(/\d+$/, '');
+  return notePitchClass === rootKey;
+}
+
+export function getBlackKeyLeft(note: string, startOctave = 4): number {
+  const match = note.match(/([A-G]#?)(\d+)$/);
+  if (!match) return 24;
+
+  const naturalName = match[1].replace('#', '');
+  const octave = Number(match[2]);
+  const whiteKeys = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+  const whiteIndex = whiteKeys.indexOf(naturalName);
+
+  if (whiteIndex === -1) return 24;
+
+  const relativeWhitePosition = ((octave - startOctave) * 7) + whiteIndex;
+  return relativeWhitePosition * 40 + 24;
+}
+
 // QWERTY Key mapping for 2 octaves
 const KEY_MAP: Record<string, number> = {
   // Octave 1: a w s e d f t g y h u j
@@ -95,7 +116,7 @@ export function PianoKeyboard({
     const noteStr = midiToNote(midi);
     const isBlack = noteStr.includes('#');
     const inScale = scaleNotesInCurrentRange.includes(noteStr);
-    const isRoot = noteStr.startsWith(currentKey);
+    const isRoot = isRootNote(noteStr, currentKey);
 
     return {
       midi,
@@ -161,9 +182,9 @@ export function PianoKeyboard({
                   id={`key-${k.noteStr}`}
                   onClick={() => playNote(k.noteStr)}
                   style={{
-                    left: `${(k.index - 1) * 40 + 24}px`,
+                    left: `${getBlackKeyLeft(k.noteStr, octaveOffset)}px`,
                   }}
-                  className={`absolute top-0 w-8 h-24 rounded-b-md z-20 transition-all font-mono text-[9px] flex flex-col justify-end items-center pb-1 shadow-md ${
+                  className={`piano-black-key absolute top-0 rounded-b-md z-20 transition-all font-mono text-[9px] flex flex-col justify-end items-center pb-1 shadow-md ${
                     isPlayingThis
                       ? 'bg-sky-400 text-slate-950 scale-95 shadow-sky-400/50'
                       : k.inScale
@@ -184,7 +205,7 @@ export function PianoKeyboard({
                 key={k.noteStr}
                 id={`key-${k.noteStr}`}
                 onClick={() => playNote(k.noteStr)}
-                className={`w-10 h-36 rounded-b-lg border z-10 transition-all font-mono text-[10px] flex flex-col justify-end items-center pb-2 shadow-sm ${
+                className={`piano-white-key rounded-b-lg border z-10 transition-all font-mono text-[10px] flex flex-col justify-end items-center pb-2 shadow-sm ${
                   isPlayingThis
                     ? 'bg-sky-300 text-slate-950 scale-95 shadow-sky-400/50 border-sky-400'
                     : k.inScale

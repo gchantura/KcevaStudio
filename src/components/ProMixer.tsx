@@ -5,6 +5,7 @@ import { ParametricEqModal, EqBand } from './ParametricEqModal';
 import {
   Volume2,
   VolumeX,
+  Headphones,
   Radio,
   Sliders,
   Sparkles,
@@ -414,7 +415,7 @@ export function ProMixer({ composition, isPlaying, onUpdateComposition }: ProMix
                     }`}
                     title="Solo this channel"
                   >
-                    S
+                    <Headphones className="w-3.5 h-3.5 mx-auto" />
                   </button>
                   <button
                     id={`btn-mute-${trackId}`}
@@ -426,7 +427,7 @@ export function ProMixer({ composition, isPlaying, onUpdateComposition }: ProMix
                     }`}
                     title="Mute this channel"
                   >
-                    M
+                    {ch.isMuted ? <VolumeX className="w-3.5 h-3.5 mx-auto" /> : <Volume2 className="w-3.5 h-3.5 mx-auto" />}
                   </button>
                 </div>
 

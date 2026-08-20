@@ -215,21 +215,20 @@ export function Header({
             </div>
 
             {/* Steps */}
-            <div className="studio-divider hidden md:flex items-center gap-0.5 pl-2 border-l">
+            <div className="studio-divider hidden md:flex items-center gap-1 pl-2 border-l">
+              <span className="studio-label text-[10px] font-mono">STEPS</span>
+              <div className="studio-segment-group">
               {[16, 32, 64, 128].map((steps) => (
                 <button
                   key={steps}
                   onClick={() => handleStepsCountChange(steps)}
                   data-active={composition.stepsCount === steps}
-                  className={`px-1.5 py-0.5 text-[10px] font-mono font-bold rounded transition ${
-                    composition.stepsCount === steps
-                      ? 'studio-segment'
-                      : 'studio-control'
-                  }`}
+                  className="text-[10px] font-mono font-bold transition"
                 >
                   {steps}
                 </button>
               ))}
+              </div>
             </div>
 
             {/* Volume */}

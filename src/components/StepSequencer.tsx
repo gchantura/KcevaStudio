@@ -470,7 +470,7 @@ export function StepSequencer({
                   className="studio-inset p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-950 border border-l-0"
                   title="Remove Line"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
@@ -805,7 +805,7 @@ export function StepSequencer({
             return (
               <div
                 key={stepIdx}
-                className={`py-1 font-bold transition-all ${
+                className={`studio-step-ruler-cell font-bold transition-all ${
                   isCurrent
                     ? 'bg-sky-500 text-slate-950 shadow-lg scale-110'
                     : isBeatStart
@@ -823,11 +823,11 @@ export function StepSequencer({
         {selectedTrack === 'drums' ? (
           <div className="w-max min-w-180 space-y-2">
             {[
-              { id: 'kick', name: 'Kick 808', color: 'bg-amber-500 border-amber-300 text-slate-950' },
-              { id: 'snare', name: 'Snare / Clap', color: 'bg-rose-500 border-rose-300 text-white' },
-              { id: 'hihat', name: 'Closed Hat', color: 'bg-yellow-400 border-yellow-200 text-slate-950' },
+              { id: 'kick', name: 'Kick', color: 'bg-amber-500 border-amber-300 text-slate-950' },
+              { id: 'snare', name: 'Snare', color: 'bg-rose-500 border-rose-300 text-white' },
+              { id: 'hihat', name: 'Hat', color: 'bg-yellow-400 border-yellow-200 text-slate-950' },
               { id: 'openHat', name: 'Open Hat', color: 'bg-cyan-400 border-cyan-200 text-slate-950' },
-              { id: 'perc', name: 'Percussion', color: 'bg-emerald-400 border-emerald-200 text-slate-950' },
+              { id: 'perc', name: 'Perc', color: 'bg-emerald-400 border-emerald-200 text-slate-950' },
             ].map((drum) => {
               const drumKey = drum.id as 'kick' | 'snare' | 'hihat' | 'openHat' | 'perc';
               return (
@@ -837,7 +837,7 @@ export function StepSequencer({
                       audioDsp.resumeContext();
                       audioDsp.playDrumSound(drumKey);
                     }}
-                    className="w-32 py-2 px-3 bg-slate-950 border border-slate-800 hover:border-slate-600 text-slate-200 font-bold text-xs font-mono flex items-center justify-between shrink-0 transition"
+                    className="w-28 h-8 px-2 bg-slate-950 border border-slate-800 hover:border-slate-600 text-slate-200 font-bold text-xs font-mono flex items-center justify-between text-left shrink-0 transition"
                   >
                     <span>{drum.name}</span>
                     <Volume1 className="w-3.5 h-3.5 text-slate-400" />
@@ -858,7 +858,7 @@ export function StepSequencer({
                         <button
                           key={stepIdx}
                           onClick={() => toggleDrumStep(drumKey, stepIdx)}
-                          className={`h-9 border transition-all flex items-center justify-center font-bold text-xs font-mono ${
+                          className={`studio-step-cell border transition-all flex items-center justify-center font-bold text-xs font-mono ${
                             isActive
                               ? `${drum.color} shadow-md scale-105`
                               : isBeatStart
@@ -879,8 +879,8 @@ export function StepSequencer({
           /* ================= CHORD TRACK GRID ================= */
           <div className="w-max min-w-180 space-y-2">
             <div className="flex items-center gap-3">
-              <div className="w-32 py-3 px-3 bg-slate-950 border border-slate-800 text-purple-400 font-black text-xs font-mono shrink-0">
-                CHORD LINE
+                <div className="w-28 h-8 px-2 bg-slate-950 border border-slate-800 text-purple-400 font-black text-xs font-mono flex items-center text-left shrink-0">
+                CHORD
               </div>
 
               <div
@@ -899,7 +899,7 @@ export function StepSequencer({
                     <button
                       key={stepIdx}
                       onClick={() => toggleChordStep(stepIdx, activeChordStamp)}
-                      className={`h-11 border transition-all flex flex-col items-center justify-center font-mono font-bold text-xs ${
+                      className={`studio-step-cell border transition-all flex flex-col items-center justify-center font-mono font-bold text-xs ${
                         isActive
                           ? 'bg-purple-600 border-purple-300 text-white shadow-lg scale-105'
                           : isBeatStart
@@ -927,7 +927,7 @@ export function StepSequencer({
                   <div key={note} className="flex items-center gap-3">
                     <button
                       onClick={() => auditionNote(note)}
-                      className={`w-32 py-1.5 px-3 border text-xs font-mono font-bold flex items-center justify-between shrink-0 transition ${
+                      className={`w-28 h-8 px-2 border text-xs font-mono font-bold flex items-center justify-between text-left shrink-0 transition ${
                         isRoot
                           ? 'bg-slate-950 text-sky-400 border-l-4 border-l-sky-400 border-slate-800 hover:bg-slate-900'
                           : 'bg-slate-950 text-slate-300 border-slate-900 hover:bg-slate-800'
@@ -959,7 +959,7 @@ export function StepSequencer({
                           <button
                             key={stepIdx}
                             onClick={() => toggleStep(selectedTrack, stepIdx, note)}
-                            className={`h-7 border transition-all flex items-center justify-center font-mono font-bold text-[10px] ${
+                            className={`studio-step-cell border transition-all flex items-center justify-center font-mono font-bold text-[10px] ${
                               isActive
                                 ? selectedTrack === 'melody'
                                   ? 'bg-sky-500 border-sky-200 text-slate-950 shadow-md scale-105'

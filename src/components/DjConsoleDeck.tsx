@@ -11,6 +11,8 @@ import {
   Activity,
   Layers,
   Plus,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { MusicComposition, CustomSoundLine } from '../types';
 import { audioDsp } from '../audio/dspEngine';
@@ -190,15 +192,17 @@ export const DjConsoleDeck: React.FC<DjConsoleDeckProps> = ({
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => handleScratch('backward')}
-              className="py-1.5 px-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-mono text-slate-300 transition"
+              className="dj-scratch-button bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-mono text-slate-300 transition"
             >
-              ◀ Scratch Rev
+              <ChevronLeft className="w-3.5 h-3.5" />
+              <span>Scratch Rev</span>
             </button>
             <button
               onClick={() => handleScratch('forward')}
-              className="py-1.5 px-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-mono text-slate-300 transition"
+              className="dj-scratch-button bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-mono text-slate-300 transition"
             >
-              Scratch Fwd ▶
+              <span>Scratch Fwd</span>
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
@@ -317,15 +321,17 @@ export const DjConsoleDeck: React.FC<DjConsoleDeckProps> = ({
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => handleScratch('backward')}
-              className="py-1.5 px-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-mono text-slate-300 transition"
+              className="dj-scratch-button bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-mono text-slate-300 transition"
             >
-              ◀ Scratch Rev
+              <ChevronLeft className="w-3.5 h-3.5" />
+              <span>Scratch Rev</span>
             </button>
             <button
               onClick={() => handleScratch('forward')}
-              className="py-1.5 px-2 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-mono text-slate-300 transition"
+              className="dj-scratch-button bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded text-xs font-mono text-slate-300 transition"
             >
-              Scratch Fwd ▶
+              <span>Scratch Fwd</span>
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
@@ -374,9 +380,7 @@ export const DjConsoleDeck: React.FC<DjConsoleDeckProps> = ({
               Live Club Performance Sampler & Drop Stamper
             </h3>
           </div>
-          <span className="text-[11px] text-slate-500 font-mono">
-            Click pad to trigger sound • Click "+ Add to Song" to stamp as real track
-          </span>
+          <span className="text-[11px] text-slate-500 font-mono">Preview or add</span>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
@@ -385,22 +389,31 @@ export const DjConsoleDeck: React.FC<DjConsoleDeckProps> = ({
               key={idx}
               className="bg-slate-950 border border-slate-800 rounded p-2.5 flex flex-col justify-between gap-2 hover:border-slate-700 transition"
             >
-              <button
-                onClick={pad.fn}
-                className="w-full py-2 bg-slate-900 hover:bg-slate-800 active:bg-sky-600 active:text-white text-slate-200 rounded text-xs font-bold transition flex flex-col items-center gap-1"
-              >
-                <span>{pad.name}</span>
-                <span className="text-[9px] text-slate-500 font-mono">{pad.note}</span>
-              </button>
-
-              <button
-                onClick={() => handleAddFxToProject(pad.name, pad.type)}
-                className="w-full py-1 bg-slate-900/80 hover:bg-sky-700 text-sky-400 hover:text-white rounded text-[10px] font-mono flex items-center justify-center gap-1 transition"
-                title="Add this FX drop into your song arrangement as a real track"
-              >
-                <Plus className="w-3 h-3" />
-                <span>+ Add to Song</span>
-              </button>
+              <div className="min-h-14 grid grid-cols-[2rem_1fr_2rem] items-center gap-2">
+                <button
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    pad.fn();
+                  }}
+                  aria-label={`Play ${pad.name}`}
+                  title={`Play ${pad.name}`}
+                  className="studio-icon-button w-full bg-slate-900 hover:bg-sky-700 text-sky-400 hover:text-white rounded transition"
+                >
+                  <Play className="w-4 h-4 fill-current" />
+                </button>
+                <div className="min-w-0 flex flex-col items-center gap-1 text-xs font-bold text-slate-200 text-center">
+                  <span className="truncate max-w-full">{pad.name}</span>
+                  <span className="text-[9px] text-slate-500 font-mono truncate max-w-full">{pad.note}</span>
+                </div>
+                <button
+                  onClick={() => handleAddFxToProject(pad.name, pad.type)}
+                  aria-label={`Add ${pad.name} to song`}
+                  title={`Add ${pad.name} to song`}
+                  className="studio-icon-button w-full bg-slate-900 hover:bg-emerald-700 text-emerald-400 hover:text-white rounded transition"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

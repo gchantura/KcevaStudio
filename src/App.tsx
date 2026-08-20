@@ -507,7 +507,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className="studio-app flex min-h-screen font-sans">
+    <div data-theme={theme} className="studio-app flex min-h-screen font-sans">
       {/* Sidebar */}
       {!isSidebarCollapsed && (
         <TracksSidebar
@@ -586,6 +586,7 @@ export default function App() {
           {activeTab === 'timeline' && (
             <div className="space-y-6">
               <TimelineArranger
+                key={composition.id}
                 composition={composition}
                 isPlaying={isPlaying}
                 onTogglePlay={handleTogglePlay}

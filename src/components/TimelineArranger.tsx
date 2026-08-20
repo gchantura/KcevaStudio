@@ -17,6 +17,7 @@ import {
   X,
   Copy,
   Repeat,
+  Headphones,
 } from 'lucide-react';
 import { MusicComposition, TimelineClip, TimelineTrack } from '../types';
 import { audioDsp } from '../audio/dspEngine';
@@ -41,6 +42,30 @@ const SOUND_LIBRARY: { name: string; type: TimelineClip['type']; durationBars: n
   { name: 'Vocal Adlib - Yeah Yeah', type: 'vocal', durationBars: 2, color: '#6366f1', speed: 0.75, sampleType: 'vocal' },
 ];
 
+const createEmptyTimelineTracks = (composition: MusicComposition): TimelineTrack[] => {
+  const tracks: TimelineTrack[] = [
+    { id: 'melody', name: 'Lead', type: 'synth', color: '#38bdf8', volume: composition.leadSynthPatch?.volume ?? 0.8, pan: 0, isMuted: false, isSoloed: false, isLocked: false, clips: [] },
+    { id: 'chords', name: 'Chords', type: 'synth', color: '#a855f7', volume: composition.chordSynthPatch?.volume ?? 0.7, pan: 0, isMuted: false, isSoloed: false, isLocked: false, clips: [] },
+    { id: 'bass', name: 'Bass', type: 'bass', color: '#10b981', volume: composition.bassSynthPatch?.volume ?? 0.85, pan: 0, isMuted: false, isSoloed: false, isLocked: false, clips: [] },
+    { id: 'drums', name: 'Drums', type: 'drums', color: '#f59e0b', volume: composition.drumVolume ?? 0.85, pan: 0, isMuted: false, isSoloed: false, isLocked: false, clips: [] },
+  ];
+
+  return tracks.concat(
+    (composition.customLines ?? []).map((line) => ({
+      id: line.id,
+      name: line.name,
+      type: line.type === 'voice' ? 'vocal' : 'synth',
+      color: line.color,
+      volume: line.volume ?? 0.8,
+      pan: line.pan ?? 0,
+      isMuted: line.isMuted,
+      isSoloed: line.isSoloed,
+      isLocked: false,
+      clips: [],
+    }))
+  );
+};
+
 export const TimelineArranger: React.FC<TimelineArrangerProps> = ({
   composition,
   isPlaying,
@@ -63,8 +88,9 @@ export const TimelineArranger: React.FC<TimelineArrangerProps> = ({
     initialDuration: number;
   } | null>(null);
 
-  // Multi-Track Arrangement Lanes
-  const [tracks, setTracks] = useState<TimelineTrack[]>([
+  // Multi-Track Arrangement Lanes start empty and only contain studio tracks.
+  const [tracks, setTracks] = useState<TimelineTrack[]>(() => createEmptyTimelineTracks(composition));
+  /*
     {
       id: 'trk_v1',
       name: 'V1 - Lead Vocals & Stems',
@@ -228,9 +254,32 @@ export const TimelineArranger: React.FC<TimelineArrangerProps> = ({
         },
       ],
     },
-  ]);
+  ]); */
 
   const totalBars = 32;
+
+  useEffect(() => {
+    setTracks((currentTracks) => {
+      const builtInIds = new Set(['melody', 'chords', 'bass', 'drums']);
+      const builtIns = currentTracks.filter((track) => builtInIds.has(track.id));
+      const customTracks = (composition.customLines ?? []).map((line) => {
+        const existing = currentTracks.find((track) => track.id === line.id);
+        return existing ?? {
+          id: line.id,
+          name: line.name,
+          type: line.type === 'voice' ? 'vocal' : 'synth',
+          color: line.color,
+          volume: line.volume ?? 0.8,
+          pan: line.pan ?? 0,
+          isMuted: line.isMuted,
+          isSoloed: line.isSoloed,
+          isLocked: false,
+          clips: [],
+        };
+      });
+      return builtIns.concat(customTracks);
+    });
+  }, [composition.customLines]);
 
   // Start or Stop Timeline Audio Engine in sync with isPlaying
   useEffect(() => {
@@ -767,7 +816,7 @@ export const TimelineArranger: React.FC<TimelineArrangerProps> = ({
                         }`}
                         title="Mute Track"
                       >
-                        M
+                        {track.isMuted ? <VolumeX className="w-3 h-3" /> : <Volume2 className="w-3 h-3" />}
                       </button>
                       <button
                         onClick={() =>
@@ -780,7 +829,7 @@ export const TimelineArranger: React.FC<TimelineArrangerProps> = ({
                         }`}
                         title="Solo Track"
                       >
-                        S
+                        <Headphones className="w-3 h-3" />
                       </button>
                     </div>
 
