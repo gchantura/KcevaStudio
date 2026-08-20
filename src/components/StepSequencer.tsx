@@ -13,7 +13,6 @@ import {
   Radio,
   ArrowLeft,
   ArrowRight,
-  Keyboard,
   Disc3,
   Plus,
   Sliders,
@@ -25,8 +24,8 @@ import {
   Home,
   Zap,
   CloudSun,
+  Pencil,
 } from 'lucide-react';
-import { PianoKeyboard } from './PianoKeyboard';
 
 interface StepSequencerProps {
   composition: MusicComposition;
@@ -51,7 +50,6 @@ export function StepSequencer({
     setInternalSelectedTrack(track);
     if (externalOnSelectTrack) externalOnSelectTrack(track);
   };
-  const [showKeyboard, setShowKeyboard] = useState(true);
   const [activeChordStamp, setActiveChordStamp] = useState<string>('I');
   const [isAddLineOpen, setIsAddLineOpen] = useState(false);
   const [trackMutes, setTrackMutes] = useState<Record<string, boolean>>({
@@ -395,6 +393,38 @@ export function StepSequencer({
     setSelectedTrack('melody');
   };
 
+  const handleDuplicateCustomLine = (lineId: string) => {
+    const source = composition.customLines?.find((line) => line.id === lineId);
+    if (!source) return;
+    const copy: CustomSoundLine = {
+      ...source,
+      id: `custom_line_${Date.now()}`,
+      name: `${source.name} Copy`,
+      sequence: [...source.sequence],
+      velocities: source.velocities ? [...source.velocities] : undefined,
+      durations: source.durations ? [...source.durations] : undefined,
+      probabilities: source.probabilities ? [...source.probabilities] : undefined,
+    };
+    onUpdateComposition({ ...composition, customLines: [...(composition.customLines || []), copy] });
+    setSelectedTrack(copy.id);
+  };
+
+  const handlePreviewCustomLine = (line: CustomSoundLine) => {
+    const note = line.sequence.find((value) => value && value !== 'REST');
+    if (!note) return;
+    audioDsp.resumeContext();
+    audioDsp.playSynthesizerNote(noteToFreq(note), line.patch, 0.5);
+  };
+
+  const handleRenameCustomLine = (line: CustomSoundLine) => {
+    const nextName = window.prompt('Rename track', line.name)?.trim();
+    if (!nextName || nextName === line.name) return;
+    const updatedLines = (composition.customLines || []).map((item) =>
+      item.id === line.id ? { ...item, name: nextName } : item
+    );
+    onUpdateComposition({ ...composition, customLines: updatedLines });
+  };
+
   const toggleDrumStep = (drumType: 'kick' | 'snare' | 'hihat' | 'openHat' | 'perc', stepIndex: number) => {
     const updatedPattern = {
       ...composition.drumPattern,
@@ -408,101 +438,96 @@ export function StepSequencer({
     onUpdateComposition({ ...composition, drumPattern: updatedPattern });
   };
 
-  const diatonicChords = [
-    { degree: 'I', label: 'I (Tonic)', name: 'I' },
-    { degree: 'ii', label: 'ii (Minor 2nd)', name: 'ii' },
-    { degree: 'iii', label: 'iii (Minor 3rd)', name: 'iii' },
-    { degree: 'IV', label: 'IV (Subdominant)', name: 'IV' },
-    { degree: 'V', label: 'V (Dominant 5th)', name: 'V' },
-    { degree: 'vi', label: 'vi (Relative Minor)', name: 'vi' },
-    { degree: 'Imaj7', label: 'Imaj7 (Lush Major 7th)', name: 'Imaj7' },
-    { degree: 'V7', label: 'V7 (Dominant 7th)', name: 'V7' },
-  ];
-
   const totalBars = Math.ceil(composition.stepsCount / 16);
 
   return (
     <div id="step-sequencer" className="min-w-0 max-w-full space-y-4">
       {/* Visual Track Selector Ribbon */}
-      <div className="studio-panel border p-3 space-y-3 shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="studio-panel border p-3 shadow-xl">
+        <div className="studio-sequencer-toolbar">
           {/* Main 4 Musical Lines + Dynamic Lines */}
-          <div className="flex flex-wrap items-center gap-2">
-            {[
-              { id: 'melody', label: '1. Lead Melody', icon: Music, color: 'bg-sky-500 text-slate-950 border-sky-300' },
-              { id: 'chords', label: '2. Chords & Pad', icon: Sparkles, color: 'bg-purple-500 text-slate-950 border-purple-300' },
-              { id: 'bass', label: '3. Bass & 808', icon: Radio, color: 'bg-emerald-500 text-slate-950 border-emerald-300' },
-              { id: 'drums', label: '4. Drums (5 Tracks)', icon: Disc3, color: 'bg-amber-500 text-slate-950 border-amber-300' },
-            ].map((t) => {
+          <div className="studio-track-tabs-scroll">
+            <div className="studio-track-tabs">
+              {[
+              { id: 'melody', label: '1. Lead', icon: Music },
+              { id: 'chords', label: '2. Chords', icon: Sparkles },
+              { id: 'bass', label: '3. Bass', icon: Radio },
+              { id: 'drums', label: '4. Drums', icon: Disc3 },
+              ].map((t) => {
               const IconComp = t.icon;
               return (
                 <button
                   key={t.id}
                   onClick={() => setSelectedTrack(t.id)}
-                  className={`px-4 py-2 text-xs font-black transition-all flex items-center gap-2 border ${
-                    selectedTrack === t.id
-                      ? `${t.color} shadow-lg scale-105`
-                      : 'studio-inset text-slate-300 border hover:bg-slate-800 hover:text-white'
-                  }`}
+                  title={`Select ${t.label}`}
+                  data-active={selectedTrack === t.id}
+                  className="studio-track-tab text-xs font-bold transition-all flex items-center gap-2"
                 >
                   <IconComp className="w-3.5 h-3.5" />
                   <span>{t.label}</span>
                 </button>
               );
-            })}
+              })}
 
             {/* Custom Added Lines */}
-            {composition.customLines?.map((line, idx) => (
-              <div key={line.id} className="flex items-center">
+              {composition.customLines?.map((line, idx) => (
+              <div key={line.id} className="studio-custom-track">
                 <button
                   onClick={() => setSelectedTrack(line.id)}
-                  className={`px-3 py-2 text-xs font-black transition-all flex items-center gap-1.5 border ${
-                    selectedTrack === line.id
-                      ? 'bg-pink-600 text-white border-pink-400 shadow-lg scale-105'
-                      : 'studio-inset text-pink-300 border hover:bg-slate-800'
-                  }`}
+                  title={`Select ${line.name}`}
+                  data-active={selectedTrack === line.id}
+                  className="studio-track-tab text-xs font-bold transition-all flex items-center gap-1.5"
                 >
-                  <Music className="w-3 h-3 text-pink-400" />
+                  <Music className="w-3 h-3" />
                   <span>{5 + idx}. {line.name}</span>
                 </button>
-                <button
-                  onClick={() => handleDeleteCustomLine(line.id)}
-                  className="studio-inset p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-950 border border-l-0"
-                  title="Remove Line"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
+                <div className="studio-custom-track-actions">
+                  <button
+                    onClick={() => handlePreviewCustomLine(line)}
+                    aria-label={`Play ${line.name}`}
+                    title={`Play ${line.name}`}
+                  >
+                    <Play className="w-4 h-4 fill-current" />
+                  </button>
+                  <button
+                    onClick={() => handleDuplicateCustomLine(line.id)}
+                    aria-label={`Duplicate ${line.name}`}
+                    title={`Duplicate ${line.name}`}
+                  >
+                    <Layers className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleRenameCustomLine(line)}
+                    aria-label={`Rename ${line.name}`}
+                    title={`Rename ${line.name}`}
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteCustomLine(line.id)}
+                    aria-label={`Delete ${line.name}`}
+                    title={`Delete ${line.name}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-            ))}
+              ))}
 
             {/* + Add Line Button */}
-            <button
+              <button
               onClick={() => setIsAddLineOpen(!isAddLineOpen)}
-              className="px-3 py-2 text-xs font-bold bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white flex items-center gap-1.5 shadow-md shadow-emerald-950/30"
-            >
-              <Plus className="w-4 h-4" />
-              <span>+ ADD SOUND LINE</span>
-            </button>
+              aria-label="Add sound line"
+              title="Add sound line"
+              className="studio-add-track"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Creative Studio Production Tools */}
-          <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono">
-            {/* Keyboard Test Sound Banner Toggle Button */}
-            {selectedTrack !== 'drums' && (
-              <button
-                onClick={() => setShowKeyboard(!showKeyboard)}
-                aria-label={showKeyboard ? 'Hide keyboard' : 'Show keyboard'}
-                className={`w-8 h-8 p-0 justify-center border rounded font-bold flex items-center transition ${
-                  showKeyboard
-                    ? 'bg-slate-950 text-sky-400 border-sky-800/80 hover:bg-slate-900'
-                    : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
-                }`}
-                title={showKeyboard ? 'Hide Test Sound Keyboard' : 'Show Test Sound Keyboard'}
-              >
-                <Keyboard className="w-3.5 h-3.5" />
-              </button>
-            )}
-
+          <div className="studio-production-tools text-xs font-mono">
             {/* Euclidean Polyrhythm Tool */}
             <button
               onClick={() => setIsEuclideanOpen(!isEuclideanOpen)}
@@ -515,7 +540,7 @@ export function StepSequencer({
 
             {/* Arpeggiator (for melody, bass, synth lines) */}
             {selectedTrack !== 'drums' && selectedTrack !== 'chords' && (
-              <div className="flex items-center bg-slate-950 border border-slate-800 rounded p-0.5">
+              <div className="studio-tool-group">
                 <button
                   onClick={() => applyArpeggiator('up')}
                   aria-label="Arpeggiate up"
@@ -544,7 +569,7 @@ export function StepSequencer({
             )}
 
             {/* Shift Pattern Left / Right */}
-            <div className="flex items-center bg-slate-950 border border-slate-800 rounded p-0.5">
+            <div className="studio-tool-group">
               <button
                 onClick={() => shiftPattern('left')}
                 aria-label="Shift pattern left"
@@ -575,7 +600,7 @@ export function StepSequencer({
 
             {/* Auto Drum Beat Fillers or Randomizer */}
             {selectedTrack === 'drums' ? (
-              <div className="flex items-center gap-1 bg-slate-950 p-0.5 border border-slate-800 rounded">
+              <div className="studio-tool-group">
                 <button
                   onClick={() => handleAutoFillDrums('club_house')}
                   aria-label="House beat"
@@ -630,7 +655,7 @@ export function StepSequencer({
                 <Sparkles className="w-4 h-4" />
                 Euclidean Polyrhythm Generator ({selectedTrack})
               </span>
-              <button onClick={() => setIsEuclideanOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsEuclideanOpen(false)} title="Close Euclidean tool" className="text-slate-400 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -685,7 +710,7 @@ export function StepSequencer({
                 <Sparkles className="w-4 h-4" />
                 SELECT AN INSTRUMENT TO ADD A NEW TRACK:
               </span>
-              <button onClick={() => setIsAddLineOpen(false)} className="text-slate-400 hover:text-white">
+              <button onClick={() => setIsAddLineOpen(false)} title="Close add sound line" className="text-slate-400 hover:text-white">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -705,70 +730,6 @@ export function StepSequencer({
           </div>
         )}
 
-        {/* Interactive Helper Piano Keys for Melody & Bass - Collapsible */}
-        {selectedTrack !== 'drums' && showKeyboard && (
-            <div className="studio-panel border p-3 space-y-2 relative transition-all">
-              {selectedTrack === 'chords' ? (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-purple-400 font-bold flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4" />
-                      CLICK A CHORD TO HEAR OR STAMP IT:
-                    </span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-slate-500 hidden sm:inline">
-                        Key: {composition.key} {composition.scale}
-                      </span>
-                      <button
-                        onClick={() => setShowKeyboard(false)}
-                        className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 rounded text-[10px] font-mono flex items-center gap-1"
-                        title="Hide Chord Keyboard"
-                      >
-                        <X className="w-3 h-3 text-rose-400" />
-                        <span>Hide</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
-                    {diatonicChords.map((chord) => (
-                      <button
-                        key={chord.degree}
-                        onClick={() => {
-                          setActiveChordStamp(chord.degree);
-                          auditionNote(chord.degree);
-                        }}
-                        className={`p-2.5 border text-center transition flex flex-col items-center justify-center ${
-                          activeChordStamp === chord.degree
-                            ? 'bg-purple-600 text-white border-purple-400 shadow-md font-bold scale-105'
-                            : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800'
-                        }`}
-                      >
-                        <span className="text-sm font-mono font-black">{chord.degree}</span>
-                        <span className="text-[10px] text-slate-400 truncate">{chord.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex items-center justify-between text-xs font-mono pb-1">
-                    <span className="text-sky-400 font-bold">CLICK KEYS TO TEST SOUND:</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-slate-500 hidden sm:inline">Scale: {composition.key} {composition.scale}</span>
-                    </div>
-                  </div>
-                  <PianoKeyboard
-                    currentKey={composition.key}
-                    currentScale={composition.scale}
-                    activePatch={selectedTrack === 'bass' ? composition.bassSynthPatch : composition.leadSynthPatch}
-                    trackName={selectedTrack}
-                    onRecordStep={(note) => auditionNote(note)}
-                  />
-                </div>
-              )}
-            </div>
-        )}
       </div>
 
       {/* Visual Step Sequencer Grid with Big Glowing Step Pads */}
