@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { MusicComposition } from '../types';
 import { NOTE_NAMES, SCALES } from '../audio/musicTheory';
 import { SONG_PRESETS } from '../audio/songPresets';
-import { PlusCircle, Sparkles, X, Music, Layers, Disc3, Zap } from 'lucide-react';
+import { CirclePlus as PlusCircle, Sparkles, X, Music, Layers, Disc3, Zap } from 'lucide-react';
 
 interface NewProjectModalProps {
   isOpen: boolean;
@@ -259,7 +259,7 @@ export function NewProjectModal({
                     : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-800'
                 }`}
               >
-                <div className="text-xs font-bold text-slate-200">✨ Blank Slate</div>
+                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-200"><Sparkles className="w-3.5 h-3.5 text-sky-400" />Blank Slate</div>
                 <div className="text-[10px] text-slate-500 mt-0.5">Empty 8-line canvas</div>
               </button>
 

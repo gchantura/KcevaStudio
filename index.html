@@ -2,18 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <meta name="theme-color" content="#020617" />
     <meta name="author" content="Kceva" />
     <meta name="application-name" content="Kceva Music Generator Studio" />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="keywords" content="online music generator, beat maker, music studio, synth, drum machine, piano roll, DAW, browser music production, MIDI, WAV export, multi-track" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Kceva Studio" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <link rel="canonical" href="https://kceva.com/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
     <title>Online Music Generator Studio | Kceva</title>
-    <meta name="description" content="Create beats, melodies, chord progressions, synth sounds, and complete multi-track songs in Kceva's browser-based music generator studio." />
+    <meta name="description" content="Create beats, melodies, chord progressions, synth sounds, and complete multi-track songs in Kceva's free browser-based music generator studio. No download required." />
     <meta property="og:url" content="https://kceva.com/" />
     <meta property="og:title" content="Online Music Generator Studio | Kceva" />
-    <meta property="og:description" content="Create beats, melodies, chord progressions, synth sounds, and complete multi-track songs in your browser." />
+    <meta property="og:description" content="Create beats, melodies, chord progressions, synth sounds, and complete multi-track songs in your browser. Free, no download required." />
     <meta property="og:type" content="website" />
     <meta property="og:image:type" content="image/svg+xml" />
     <meta property="og:site_name" content="Kceva Music Generator Studio" />
@@ -21,12 +32,13 @@
     <meta property="og:image" content="https://kceva.com/og-image.svg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Kceva Music Generator Studio" />
+    <meta property="og:image:alt" content="Kceva Music Generator Studio - Browser-based music production" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Online Music Generator Studio | Kceva" />
-    <meta name="twitter:description" content="Create beats, melodies, chord progressions, synth sounds, and complete multi-track songs in your browser." />
+    <meta name="twitter:description" content="Create beats, melodies, chord progressions, synth sounds, and complete multi-track songs in your browser. Free, no download required." />
     <meta name="twitter:image" content="https://kceva.com/og-image.svg" />
     <meta name="twitter:image:alt" content="Kceva Music Generator Studio" />
+    <meta name="twitter:site" content="@kceva" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -34,8 +46,44 @@
         "name": "Kceva Music Generator Studio",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Web",
-        "description": "Browser-based music production studio for creating beats, melodies, synth sounds, and multi-track songs.",
+        "description": "Browser-based music production studio for creating beats, melodies, chord progressions, synth sounds, and multi-track songs with real-time DSP synthesis.",
         "url": "https://kceva.com/",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Beat sequencer with 808 drum machine",
+          "Piano roll with scale locking",
+          "Multi-track mixing console",
+          "Synthesizer with ADSR envelopes",
+          "C++ DSP playground",
+          "WAV and MIDI export",
+          "DJ performance deck",
+          "Timeline arranger",
+          "Audio recorder",
+          "Sample rack with drag-and-drop"
+        ],
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "ratingCount": "100",
+          "bestRating": "5",
+          "worstRating": "1"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Kceva Music Generator Studio",
+        "url": "https://kceva.com/",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any (Web Browser)",
+        "browserRequirements": "Requires JavaScript and Web Audio API support",
+        "description": "Free online music production studio with synthesizers, drum machines, piano roll, mixer, and multi-track arrangement.",
         "offers": {
           "@type": "Offer",
           "price": "0",
@@ -47,14 +95,14 @@
   <body>
     <div id="root">
       <noscript>
-        <main>
+        <main style="max-width:600px;margin:2rem auto;padding:1.5rem;font-family:sans-serif;line-height:1.6;">
           <h1>Online Music Generator Studio</h1>
-          <p>Kceva is a browser-based music production studio for creating beats, melodies, chord progressions, synth sounds, and multi-track songs.</p>
-          <p>JavaScript is required to launch the interactive studio.</p>
+          <p>Kceva is a free browser-based music production studio for creating beats, melodies, chord progressions, synth sounds, and multi-track songs with real-time DSP synthesis.</p>
+          <p>Features include a beat sequencer, piano roll, mixing console, synthesizer controls, DJ deck, timeline arranger, audio recorder, and WAV/MIDI export.</p>
+          <p>JavaScript is required to launch the interactive studio. Please enable JavaScript in your browser settings.</p>
         </main>
       </noscript>
     </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

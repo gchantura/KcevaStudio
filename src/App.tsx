@@ -508,6 +508,14 @@ export default function App() {
 
   return (
     <div data-theme={theme} className="studio-app flex min-h-screen font-sans">
+      {/* Mobile sidebar overlay */}
+      {!isSidebarCollapsed && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-30 backdrop-blur-sm"
+          onClick={toggleSidebar}
+          aria-hidden="true"
+        />
+      )}
       {/* Sidebar */}
       {!isSidebarCollapsed && (
         <TracksSidebar
@@ -700,8 +708,9 @@ export default function App() {
         </Suspense>
 
         {/* Footer */}
-        <footer className="studio-footer border-t py-3 text-center text-xs font-mono">
-          Kceva Music Studio • Real-Time C++ Audio DSP Synthesis & Web Audio Engine • kceva.com
+        <footer className="studio-footer border-t py-3 px-4 text-center text-xs font-mono">
+          <p className="hidden sm:block">Kceva Music Studio • Real-Time C++ Audio DSP Synthesis & Web Audio Engine • kceva.com</p>
+          <p className="sm:hidden">Kceva Music Studio • kceva.com</p>
         </footer>
       </div>
 

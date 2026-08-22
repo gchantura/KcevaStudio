@@ -2,24 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { MusicComposition, CustomSoundLine } from '../types';
 import { audioDsp } from '../audio/dspEngine';
 import { noteToFreq } from '../audio/musicTheory';
-import {
-  Mic,
-  Plus,
-  Trash2,
-  ChevronDown,
-  ChevronRight,
-  Volume2,
-  VolumeX,
-  Play,
-  Square,
-  Music,
-  Sparkles,
-  Radio,
-  Disc3,
-  Sliders,
-  RotateCcw,
-  Headphones,
-} from 'lucide-react';
+import { Mic, Plus, Trash2, ChevronDown, ChevronRight, Volume2, VolumeX, Play, Square, Music, Sparkles, Radio, Disc3, FileSliders as Sliders, RotateCcw, Headphones } from 'lucide-react';
 
 interface TracksSidebarProps {
   composition: MusicComposition;
@@ -146,7 +129,7 @@ export const TracksSidebar: React.FC<TracksSidebarProps> = ({
   };
 
   return (
-    <aside className="studio-sidebar w-64 border-r flex flex-col shrink-0 select-none h-screen sticky top-0 overflow-hidden font-sans shadow-2xl">
+    <aside className="studio-sidebar is-open w-64 border-r flex flex-col shrink-0 select-none h-screen sticky top-0 overflow-hidden font-sans shadow-2xl md:relative md:translate-x-0">
       {/* Sidebar Header with Quick Add Actions */}
       <div className="studio-toolbar studio-sidebar-header px-3.5 py-2.5 border-b">
         <div className="flex items-center gap-1.5 text-left">

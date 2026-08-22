@@ -15,6 +15,13 @@ import {
   Sparkles,
   ChevronRight,
   Disc,
+  Piano,
+  Disc3,
+  Zap,
+  Bell,
+  Drum,
+  Check,
+  type LucideIcon,
 } from 'lucide-react';
 
 interface SongArrangerProps {
@@ -70,15 +77,15 @@ const DEFAULT_SECTIONS: SongSection[] = [
   },
 ];
 
-const TRACK_NAMES: { id: string; name: string; icon: string }[] = [
-  { id: 'melody', name: '1. Lead Synth', icon: '🎹' },
-  { id: 'chords', name: '2. Chords & Pad', icon: '🎼' },
-  { id: 'bass', name: '3. Bassline', icon: '🎸' },
-  { id: 'kick', name: '4. Kick Drum', icon: '🥁' },
-  { id: 'snare', name: '5. Snare Drum', icon: '💥' },
-  { id: 'hihat', name: '6. Closed Hat', icon: '🥢' },
-  { id: 'openHat', name: '7. Open Hat', icon: '🔔' },
-  { id: 'perc', name: '8. Percussion', icon: '🪘' },
+const TRACK_NAMES: { id: string; name: string; icon: LucideIcon }[] = [
+  { id: 'melody', name: '1. Lead Synth', icon: Music },
+  { id: 'chords', name: '2. Chords & Pad', icon: Piano },
+  { id: 'bass', name: '3. Bassline', icon: Radio },
+  { id: 'kick', name: '4. Kick Drum', icon: Disc3 },
+  { id: 'snare', name: '5. Snare Drum', icon: Zap },
+  { id: 'hihat', name: '6. Closed Hat', icon: Disc },
+  { id: 'openHat', name: '7. Open Hat', icon: Bell },
+  { id: 'perc', name: '8. Percussion', icon: Drum },
 ];
 
 export function SongArranger({
@@ -309,7 +316,7 @@ export function SongArranger({
           {TRACK_NAMES.map((track) => (
             <div key={track.id} className="flex items-center bg-slate-950 hover:bg-slate-900/40 transition-colors">
               <div className="w-44 p-2.5 font-mono text-xs font-semibold text-slate-300 border-r border-slate-800 flex items-center gap-2">
-                <span>{track.icon}</span>
+                <track.icon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 <span className="truncate">{track.name}</span>
               </div>
 
@@ -331,7 +338,7 @@ export function SongArranger({
                             : 'bg-slate-900 border-slate-800 text-transparent hover:border-slate-700'
                         }`}
                       >
-                        ✓
+                        {isActive && <Check className="w-3.5 h-3.5" />}
                       </div>
                     </div>
                   );

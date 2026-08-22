@@ -37,8 +37,17 @@
   --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.08);
   --shadow-md: 0 8px 24px rgb(15 23 42 / 0.12);
   --control-height: 2rem;
+  --icon-size-xs: 0.75rem;
   --icon-size-sm: 0.875rem;
   --icon-size-md: 1rem;
+  --icon-size-lg: 1.25rem;
+  --icon-size-xl: 1.5rem;
+  --icon-size-2xl: 2rem;
+  --icon-color: var(--color-muted);
+  --icon-color-active: var(--color-primary);
+  --icon-color-danger: var(--color-danger);
+  --icon-color-success: var(--color-success);
+  --icon-color-warning: var(--color-warning);
   --transition-fast: 120ms ease;
   --transition-normal: 180ms ease;
   --focus-ring: 0 0 0 3px rgb(22 119 184 / 0.28);
@@ -87,8 +96,18 @@ body,
 html {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
+  font-family: 'Inter', 'Avenir Next', 'Segoe UI', sans-serif;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-mono,
+code,
+kbd,
+pre,
+samp {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
 }
 
 body {
@@ -260,11 +279,6 @@ input[type='range']::-moz-range-thumb {
   line-height: 1;
 }
 
-.studio-sidebar button.w-5.h-5 svg {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
 .studio-track-header {
   min-height: 1.5rem;
 }
@@ -356,11 +370,6 @@ input[type='range']::-moz-range-thumb {
   background: var(--color-surface-raised) !important;
 }
 
-.studio-production-tools svg {
-  width: 1rem;
-  height: 1rem;
-}
-
 .studio-production-tools > button,
 .studio-production-tools > div > button {
   color: var(--color-muted) !important;
@@ -374,12 +383,6 @@ input[type='range']::-moz-range-thumb {
   color: var(--color-primary) !important;
   background: var(--color-surface-raised) !important;
   border-color: var(--color-primary) !important;
-}
-
-.studio-app svg.lucide-trash-2 {
-  width: 1rem;
-  height: 1rem;
-  color: var(--color-muted) !important;
 }
 
 .studio-app button:has(svg.lucide-trash-2) {
@@ -422,13 +425,6 @@ input[type='range']::-moz-range-thumb {
   color: var(--color-text) !important;
   background: var(--color-surface-raised) !important;
   border-color: var(--color-primary) !important;
-}
-
-.studio-track-tab svg,
-.studio-track-delete svg {
-  width: 1rem;
-  height: 1rem;
-  flex: 0 0 auto;
 }
 
 .studio-track-delete {
@@ -499,11 +495,6 @@ input[type='range']::-moz-range-thumb {
   color: var(--color-text);
   border-color: var(--color-primary);
   background: var(--color-surface-raised);
-}
-
-.studio-custom-track-actions svg {
-  width: 1rem;
-  height: 1rem;
 }
 
 .studio-add-track {
@@ -614,6 +605,128 @@ button[class] > svg {
   width: var(--icon-size-md);
   height: var(--icon-size-md);
   flex: 0 0 auto;
+}
+
+/* ===== Global Lucide Icon Standardization ===== */
+/* Normalize all Lucide icons to consistent sizes based on context */
+
+/* Default: all lucide icons get standard size unless explicitly overridden */
+.studio-app svg[class*='lucide'] {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+/* Icons inside small buttons (w-3, h-3, w-3.5, h-3.5) → standardize to sm */
+.studio-app button svg[class*='lucide'] {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+/* Icons inside icon-only buttons → standard md size */
+.studio-app .studio-icon-button svg[class*='lucide'],
+.studio-app .studio-control svg[class*='lucide'] {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+}
+
+/* Tab bar icons → sm */
+.studio-app .studio-tab svg[class*='lucide'] {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+/* Track tab icons → sm */
+.studio-app .studio-track-tab svg[class*='lucide'] {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+/* Sidebar track buttons (w-5 h-5) → sm */
+.studio-sidebar button.w-5.h-5 svg[class*='lucide'] {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+/* Production tools icons → sm */
+.studio-production-tools svg[class*='lucide'] {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+/* Custom track action icons → sm */
+.studio-custom-track-actions svg[class*='lucide'] {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+/* Modal header icons → lg */
+.studio-modal svg[class*='lucide'] {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+}
+
+/* Hero/banner icons (w-5 h-5, w-6 h-6) → lg */
+.studio-app [class*='bg-gradient'] svg[class*='lucide'],
+.studio-app .p-2\.5 svg[class*='lucide']:only-child,
+.studio-app .p-3 svg[class*='lucide']:only-child {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+/* Welcome screen and tutorial large icons → xl */
+.studio-app .fixed svg[class*='lucide'],
+.studio-app [class*='rounded-2xl'] svg[class*='lucide']:only-child {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+/* Step cell icons → sm */
+.studio-step-cell svg[class*='lucide'] {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+/* Footer icons inherit muted color */
+.studio-footer svg[class*='lucide'] {
+  color: var(--color-subtle);
+}
+
+/* ===== Icon Color Standardization ===== */
+/* Icons in muted contexts get muted color */
+.studio-app .studio-label svg[class*='lucide'],
+.studio-app .studio-muted svg[class*='lucide'] {
+  color: var(--color-subtle);
+}
+
+/* Icons in primary action buttons get white/text color */
+.studio-app button[class*='bg'][class*='text-white'] svg[class*='lucide'] {
+  color: currentColor;
+}
+
+/* Active state icons */
+.studio-app [data-active='true'] svg[class*='lucide'] {
+  color: var(--icon-color-active);
+}
+
+/* Danger/destructive icons */
+.studio-app button[class*='rose'] svg[class*='lucide'],
+.studio-app button[class*='red'] svg[class*='lucide'],
+.studio-app button:hover svg.lucide-trash-2 {
+  color: var(--icon-color-danger);
+}
+
+/* Success icons */
+.studio-app [class*='emerald'] svg[class*='lucide'],
+.studio-app [class*='green'] svg[class*='lucide'] {
+  color: var(--icon-color-success);
+}
+
+/* Warning icons */
+.studio-app [class*='amber'] svg[class*='lucide'],
+.studio-app [class*='yellow'] svg[class*='lucide'] {
+  color: var(--icon-color-warning);
 }
 
 .studio-segment-group {
@@ -751,5 +864,171 @@ body::-webkit-scrollbar-corner,
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+/* ===== Responsive Breakpoints ===== */
+@media (max-width: 1024px) {
+  .studio-sidebar {
+    width: 14rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .studio-sidebar {
+    position: fixed;
+    z-index: 60;
+    width: 100%;
+    max-width: 20rem;
+    transform: translateX(-100%);
+    transition: transform var(--transition-normal);
+  }
+
+  .studio-sidebar.is-open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-md);
+  }
+
+  .studio-header .studio-toolbar {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .studio-step-cell {
+    width: 1.75rem;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    min-height: 1.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .studio-step-cell {
+    width: 1.5rem;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    min-height: 1.5rem;
+  }
+
+  .studio-tab {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.625rem;
+  }
+
+  .studio-tab svg {
+    width: var(--icon-size-xs);
+    height: var(--icon-size-xs);
+  }
+}
+
+/* ===== Micro-interactions & Premium Feel ===== */
+.studio-step-cell {
+  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.studio-step-cell:not(:disabled):hover {
+  transform: scale(1.08);
+  z-index: 5;
+}
+
+.studio-step-cell:not(:disabled):active {
+  transform: scale(0.95);
+}
+
+.studio-track-tab {
+  transition: all var(--transition-fast);
+}
+
+.studio-track-tab:not(:disabled):active {
+  transform: scale(0.96);
+}
+
+.studio-icon-button,
+.studio-control {
+  transition: all var(--transition-fast);
+}
+
+.studio-icon-button:not(:disabled):active,
+.studio-control:not(:disabled):active {
+  transform: scale(0.92);
+}
+
+.studio-add-track:not(:disabled):active {
+  transform: scale(0.9);
+}
+
+/* Smooth modal entrance */
+.studio-modal-backdrop {
+  animation: studio-fade-in 150ms ease-out;
+}
+
+.studio-modal {
+  animation: studio-modal-pop 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes studio-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes studio-modal-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Pulse glow for active play button */
+@keyframes studio-pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(22, 119, 184, 0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(22, 119, 184, 0); }
+}
+
+/* Smooth tab indicator */
+.studio-tab {
+  position: relative;
+  overflow: hidden;
+}
+
+.studio-tab[data-active='true']::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 1px 1px 0 0;
+}
+
+/* Card hover lift */
+.studio-panel {
+  transition: box-shadow var(--transition-normal), border-color var(--transition-normal);
+}
+
+/* Custom scrollbar for modal content */
+.studio-modal ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.studio-modal ::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar);
+  border-radius: 999px;
+}
+
+/* Touch-friendly tap targets on mobile */
+@media (hover: none) and (pointer: coarse) {
+  .studio-step-cell {
+    min-width: 2rem;
+    min-height: 2rem;
+  }
+
+  .studio-icon-button {
+    min-width: 2.25rem;
+    min-height: 2.25rem;
   }
 }

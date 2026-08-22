@@ -2,32 +2,7 @@ import { useState } from 'react';
 import { MusicComposition, ViewTab } from '../types';
 import { NOTE_NAMES } from '../audio/musicTheory';
 import { audioDsp } from '../audio/dspEngine';
-import {
-  Play,
-  Square,
-  Volume2,
-  VolumeX,
-  Download,
-  Disc3,
-  Trash2,
-  PlusCircle,
-  Save,
-  Plus,
-  Minus,
-  Keyboard,
-  Film,
-  Music,
-  Piano,
-  Sparkles,
-  Sliders,
-  Headphones,
-  FolderOpen,
-  PanelLeftClose,
-  PanelLeft,
-  CheckCircle2,
-  Moon,
-  Sun,
-} from 'lucide-react';
+import { Play, Square, Volume2, VolumeX, Download, Disc3, Trash2, CirclePlus as PlusCircle, Save, Plus, Minus, Keyboard, Film, Music, Piano, Sparkles, FileSliders as Sliders, Headphones, FolderOpen, PanelLeftClose, PanelLeft, CircleCheck as CheckCircle2, Moon, Sun, Menu, X } from 'lucide-react';
 
 interface HeaderProps {
   composition: MusicComposition;
@@ -71,6 +46,7 @@ export function Header({
 }: HeaderProps) {
   const [masterVol, setMasterVol] = useState(0.8);
   const [isMuted, setIsMuted] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleTempoChange = (newTempo: number) => {
     const clamped = Math.max(40, Math.min(220, newTempo));
@@ -248,9 +224,9 @@ export function Header({
             </div>
           </div>
 
-          {/* Right: Actions */}
-          <div className="flex items-center gap-1">
-              <button
+          {/* Right: Actions - Desktop */}
+          <div className="hidden sm:flex items-center gap-1">
+            <button
               onClick={onToggleTheme}
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
               title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
@@ -266,7 +242,6 @@ export function Header({
             >
               <PlusCircle className="w-3.5 h-3.5" />
             </button>
-
             <button
               onClick={onOpenSaveModal}
               aria-label="Save project"
@@ -275,7 +250,6 @@ export function Header({
             >
               <Save className="w-3.5 h-3.5" />
             </button>
-
             <button
               onClick={onOpenExportModal}
               aria-label="Export audio"
@@ -284,29 +258,69 @@ export function Header({
             >
               <Download className="w-3.5 h-3.5" />
             </button>
-
             {onOpenShortcutsModal && (
               <button
                 onClick={onOpenShortcutsModal}
-                className="studio-control px-2 py-1 text-xs font-mono transition flex items-center gap-1 rounded"
+                className="studio-control studio-icon-button"
                 title="Keyboard Shortcuts (?)"
+                aria-label="Keyboard shortcuts"
               >
                 <Keyboard className="w-3.5 h-3.5" />
               </button>
             )}
-
             <button
               onClick={onOpenClearModal}
               className="studio-control studio-icon-button hover:text-[var(--color-danger)]"
               title="Clear / Reset"
+              aria-label="Clear or reset"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
+
+          {/* Mobile menu toggle */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="sm:hidden studio-control studio-icon-button"
+            aria-label="Toggle menu"
+            aria-expanded={isMobileMenuOpen}
+          >
+            {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
         </div>
 
-        {/* Tab Strip — clean, monochrome, minimal */}
-        <div className="flex items-center gap-0.5 overflow-x-auto">
+        {/* Mobile Actions Menu */}
+        {isMobileMenuOpen && (
+          <div className="sm:hidden flex items-center gap-2 flex-wrap pb-2">
+            <button
+              onClick={() => { onToggleTheme(); }}
+              className="studio-control studio-icon-button"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button onClick={() => { onOpenNewModal(); setIsMobileMenuOpen(false); }} className="studio-control studio-icon-button" aria-label="New project">
+              <PlusCircle className="w-4 h-4" />
+            </button>
+            <button onClick={() => { onOpenSaveModal(); setIsMobileMenuOpen(false); }} className="studio-control studio-icon-button" aria-label="Save project">
+              <Save className="w-4 h-4" />
+            </button>
+            <button onClick={() => { onOpenExportModal(); setIsMobileMenuOpen(false); }} className="studio-control studio-icon-button" aria-label="Export audio">
+              <Download className="w-4 h-4" />
+            </button>
+            {onOpenShortcutsModal && (
+              <button onClick={() => { onOpenShortcutsModal(); setIsMobileMenuOpen(false); }} className="studio-control studio-icon-button" aria-label="Keyboard shortcuts">
+                <Keyboard className="w-4 h-4" />
+              </button>
+            )}
+            <button onClick={() => { onOpenClearModal(); setIsMobileMenuOpen(false); }} className="studio-control studio-icon-button" aria-label="Clear or reset">
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Tab Strip — clean, monochrome, minimal, scrollable on mobile */}
+        <nav aria-label="Studio views" className="flex items-center gap-0.5 overflow-x-auto scrollbar-thin">
           {STUDIO_TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             const IconComp = tab.icon;
@@ -315,6 +329,7 @@ export function Header({
                 key={tab.id}
                 onClick={() => onTabChange(tab.id as ViewTab)}
                 data-active={isActive}
+                aria-current={isActive ? 'page' : undefined}
                 className="studio-tab flex items-center gap-1.5 px-3 py-1 text-xs font-bold transition whitespace-nowrap rounded-sm border-b-2 border-transparent"
               >
                 <IconComp className="w-3.5 h-3.5" />
@@ -322,7 +337,7 @@ export function Header({
               </button>
             );
           })}
-        </div>
+        </nav>
       </div>
     </header>
   );
