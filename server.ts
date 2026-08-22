@@ -3,12 +3,14 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { exec } from 'child_process';
 import { createServer as createViteServer } from 'vite';
+import compression from 'compression';
 
 dotenv.config();
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 
+app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 
 // API Routes
@@ -145,7 +147,14 @@ async function start() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath, { maxAge: '1d' }));
+    app.use(express.static(distPath, { 
+      maxAge: '1y',
+      setHeaders: (res, path) => {
+        if (path.endsWith('.html')) {
+          res.setHeader('Cache-Control', 'no-cache');
+        }
+      }
+    }));
     app.get('*', (req, res) => {
       if (req.path !== '/') {
         res.status(404).type('text/plain').send('Not Found');
